@@ -1,6 +1,7 @@
 package model;
 
 
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -83,7 +84,7 @@ public class Game {
         this.ghostList=ghostList;
         this.numberGommes = numberGommes;
         this.pacman=pacman;
-        this.bestScore = 0;
+        this.bestScore = this.getBestScore();
         this.level=level;
         this.score=score;
         this.lives=lives;
@@ -204,4 +205,49 @@ public class Game {
         }
         return true;
     }
+
+    /**
+     * Get the best score written in the file bestScore.txt in the res folder
+     * @return int : best score
+     */
+     private int getBestScore() {
+         BufferedReader bIn = null;
+         String s = null;
+         int res = 0;
+         try {
+             File inputFile = new File("res/bestScore.txt");
+             bIn = new BufferedReader((new FileReader(inputFile)));
+             s = bIn.readLine();
+             res = Integer.parseInt(s);
+         } catch(IOException e) { }
+         finally {
+             if (bIn != null) {
+                 try {
+                     bIn.close();
+                 } catch(IOException ec){}
+             }
+         }
+         return res;
+     }
+
+    /**
+     * Write the attribute best score in a file bestScore.txt in the folder res
+     * If the file doesn't exist, create a new file
+     */
+    private void setBestScore() {
+         BufferedWriter bOut = null;
+         try {
+             File inputFile = new File("res/bestScore.txt");
+             inputFile.createNewFile();
+             bOut = new BufferedWriter((new FileWriter(inputFile)));
+             bOut.write("" +this.bestScore);
+         } catch(IOException e) {}
+         finally {
+             if(bOut != null) {
+                 try {
+                     bOut.close();
+                 } catch(IOException ec) {}
+             }
+         }
+     }
 }
