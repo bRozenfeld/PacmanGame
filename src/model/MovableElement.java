@@ -32,4 +32,11 @@ public abstract class MovableElement {
         this.cell = cell;
     }
 
+    /**
+     * Display the position of the element in the terminal
+     */
+    public void displayPosition() {
+        System.out.println("(" + this.cell.getX() + "," + this.cell.getY() + ")");
+    }
+
 }

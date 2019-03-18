@@ -28,13 +28,12 @@ public class Cell {
         this.staticElement = null;
     }
 
-    public Cell(int x, int y, boolean isWall, StaticElement staticElementAtStart, StaticElement se,
-                ArrayList<MovableElement> mel) {
+    public Cell(int x, int y, boolean isWall, StaticElement staticElementAtStart, StaticElement se) {
         this.x = x;
         this.y = y;
         this.isWall = isWall;
         this.staticElement = se;
-        this.movableElementList = mel;
+        this.movableElementList = new ArrayList<>();
         this.staticElementAtStart = staticElementAtStart;
     }
 

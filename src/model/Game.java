@@ -103,6 +103,10 @@ public class Game {
         return score;
     }
 
+    public Pacman getPacman() {
+        return this.pacman;
+    }
+
     /**
      * Move any MovableElement in the given direction
      * @param me : MovableElement to move
