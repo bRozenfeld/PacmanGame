@@ -11,8 +11,8 @@ public class Ghost extends MovableElement {
     private boolean isRegenerating;
     private GhostColor color;
 
-    public Ghost(Cell cell, GhostColor color) {
-        super(cell);
+    public Ghost(Cell cell, GhostColor color, Cell beginCell) {
+        super(cell, beginCell);
         this.color = color;
         this.isVulnerable = false;
         this.isRegenerating = false;
@@ -26,12 +26,12 @@ public class Ghost extends MovableElement {
         return isRegenerating;
     }
 
-    public void setIsRegenerating(boolean regenerating) {
-        isRegenerating = regenerating;
-    }
-
     public boolean getIsVulnerable() {
         return isVulnerable;
+    }
+
+    public void setIsRegenerating(boolean regenerating) {
+        isRegenerating = regenerating;
     }
 
     public void setIsVulnerable(boolean isVulnerable) {

@@ -91,6 +91,18 @@ public class Game {
         this.ghostEaten = 0;
     }
 
+    public int getLives() {
+        return lives;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
     /**
      * Move any MovableElement in the given direction
      * @param me : MovableElement to move
@@ -132,17 +144,7 @@ public class Game {
         if(!mel.isEmpty()) { // ghost in there
             for (MovableElement me : mel) {
                 Ghost g = (Ghost) me;
-                // Pacman eat the ghost
-                if (g.getIsVulnerable() == true) {
-                    this.ghostEaten++;
-                    this.score += 100 * (int)Math.pow(2,this.ghostEaten);
-                    g.setIsRegenerating(true);
-                }
-                // pacman is eaten
-                else {
-                    this.lives--;
-                    this.isOver();
-                }
+                this.pacmanMeetGhost(g);
             }
         }
     }
@@ -182,29 +184,59 @@ public class Game {
         }
     }
 
-    public void loseLife (){
-        this.lives=this.lives-1;
-        if (lives==0) {
-            gameOver();
+    /**
+     * Compare the actual score with the best score when the game is over
+     * Then call a method the write the best score in a file
+     * @return int : the maximum between score and bestscore
+     */
+    public int gameOver(){
+        if(this.score > this.bestScore) {
+            this.bestScore = this.score;
         }
-    }
-
-    public void gameOver(){
-
+        this.writeBestScore();
+        return this.bestScore;
     }
 
     /**
-     * Check if the game is over
-     * @return true if remaining life equal 0, false otherwise
+     * Restore the initiale state of the game when player pass a level
      */
-    public boolean isOver() {
-        if(this.lives == 0)
-            return true;
-        return false;
+    public void nextLevel() {
+        // send each ghost to its initial position
+        for(Ghost g : this.ghostList) {
+            g.getCell().removeMovableElement(g);
+            g.getBeginCell().addMovableElement(g);
+            g.setCell(g.getBeginCell());
+        }
+
+        // for each cell, restore its StaticElement at the beginning
+        for(Cell c : this.cellList) {
+            c.addStaticElement(c.getStaticElementAtStart());
+        }
+
+        // restore pacman to its initial position
+        this.pacman.getCell().removeMovableElement(this.pacman);
+        this.pacman.getBeginCell().addMovableElement(this.pacman);
+        this.pacman.setCell(this.pacman.getBeginCell());
+
+        this.level++;
     }
 
 
-
+    private void pacmanMeetGhost(Ghost g) {
+        // pacman eat the ghost
+        if (g.getIsVulnerable() == true) {
+            this.ghostEaten++;
+            this.score += 100 * (int)Math.pow(2,this.ghostEaten);
+            g.setIsRegenerating(true);
+            this.moveTo(g, g.getBeginCell());
+        }
+        // pacman is eaten by the ghost
+        else {
+            this.lives--;
+            if(this.lives == 0)
+                this.gameOver();
+        }
+    }
 
     /**
      * Increase the actual score when pacman eat a gomme by the value of the static element
@@ -216,7 +248,6 @@ public class Game {
         if(se instanceof Gomme) {
             this.numberGommes--;
             this.pacman.getCell().removeStaticElement(se);
-            this.checkGomme();
             Gomme g = (Gomme) se;
             if (g.getIsSuper() == true) {
                 for(Ghost ghost : this.ghostList) {
@@ -224,22 +255,15 @@ public class Game {
                 }
             }
         }
-        else { // se is a bonus
-            this.bonus = null;
+        else if(se instanceof Bonus){
+            Bonus b = (Bonus) se;
+            b.getCell().removeStaticElement(se);
         }
         this.score += se.getValue();
 
-    }
-
-    /**
-     * Check if there is remaining gomme in the game
-     * @return boolean true if there s still gomme, false otherwise
-     */
-    private boolean checkGomme(){
-        if (this.numberGommes==0) {
-            return false;
-        }
-        return true;
+        // check if there s still gomme left in the game
+        if(this.numberGommes == 0)
+            this.nextLevel();
     }
 
     /**
@@ -270,7 +294,7 @@ public class Game {
      * Write the attribute best score in a file bestScore.txt in the folder res
      * If the file doesn't exist, create a new file
      */
-    private void setBestScore() {
+    private void writeBestScore() {
          BufferedWriter bOut = null;
          try {
              File inputFile = new File("res/bestScore.txt");

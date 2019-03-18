@@ -14,15 +14,28 @@ public class Cell {
     private int x;
     private int y;
     private final boolean isWall;
+    private final StaticElement staticElementAtStart;
     private StaticElement staticElement;
     private ArrayList<MovableElement> movableElementList;
+
 
     public Cell(int x, int y, boolean isWall) {
         this.x = x;
         this.y = y;
         this.isWall = isWall;
+        this.staticElementAtStart = null;
+        this.movableElementList = new ArrayList<>();
         this.staticElement = null;
-        this.movableElementList = new ArrayList<MovableElement>();
+    }
+
+    public Cell(int x, int y, boolean isWall, StaticElement staticElementAtStart, StaticElement se,
+                ArrayList<MovableElement> mel) {
+        this.x = x;
+        this.y = y;
+        this.isWall = isWall;
+        this.staticElement = se;
+        this.movableElementList = mel;
+        this.staticElementAtStart = staticElementAtStart;
     }
 
     public int getX() {
@@ -35,6 +48,10 @@ public class Cell {
 
     public boolean getIsWall() {
         return isWall;
+    }
+
+    public StaticElement getStaticElementAtStart () {
+        return this.staticElementAtStart;
     }
 
     public StaticElement getStaticElement() {

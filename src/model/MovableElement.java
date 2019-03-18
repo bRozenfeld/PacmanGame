@@ -7,22 +7,29 @@ package model;
 public abstract class MovableElement {
 
     /**
-     * The cell containing this element
+     * The cell currently containing this element
      */
     private Cell cell;
+    /**
+     * Cell where the element is positioning at the beginning
+     */
+    private Cell beginCell;
 
-    public MovableElement(Cell cell) {
+    public MovableElement(Cell cell, Cell beginCell) {
         this.cell = cell;
+        this.beginCell = beginCell;
     }
 
-    /**
-     * @return Cell containing this movable element
-     */
     public Cell getCell() {
         return cell;
+    }
+
+    public Cell getBeginCell() {
+        return beginCell;
     }
 
     public void setCell(Cell cell) {
         this.cell = cell;
     }
+
 }
