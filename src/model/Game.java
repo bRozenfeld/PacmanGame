@@ -92,25 +92,26 @@ public class Game {
     }
 
     /**
-     * Move pacman in the given direction
+     * Move any MovableElement in the given direction
+     * @param me : MovableElement to move
      * @param dx : int corresponding movement in the axe x
      * @param dy : int corresponding the movement in the axe y
      * @return boolean true if the move is legit, false otherwise
      */
-    public boolean movePacman(int dx, int dy){
-        Cell pacmanCell = this.pacman.getCell();
-        Cell futurCell = new Cell(pacmanCell.getX()+dx, pacmanCell.getY()+dy, false);
+    public boolean move(MovableElement me, int dx, int dy){
+        Cell actualCell = me.getCell();
+        Cell futureCell = new Cell(actualCell.getX()+dx, actualCell.getY()+dy, false);
 
-        int ind = this.cellList.indexOf(futurCell);
+        int ind = this.cellList.indexOf(futureCell);
 
         // The futur cell is either a wall or invalide x and y
         // It's not in the cell list of the game
         if (ind == -1)
             return false;
 
-        pacmanCell.removeMovableElement(this.pacman);
-        futurCell.addMovableElement(this.pacman);
-        this.pacman.setCell(futurCell);
+        actualCell.removeMovableElement(me);
+        futureCell.addMovableElement(me);
+        me.setCell(futureCell);
 
         return true;
     }
@@ -135,6 +136,7 @@ public class Game {
                 if (g.getIsVulnerable() == true) {
                     this.ghostEaten++;
                     this.score += 100 * (int)Math.pow(2,this.ghostEaten);
+                    g.setIsRegenerating(true);
                 }
                 // pacman is eaten
                 else {
@@ -145,6 +147,40 @@ public class Game {
         }
     }
 
+    /**
+     * Move the movableElement into the given cell
+     * @param me : MovableElement to move
+     * @param c : Cell to go
+     */
+    public void moveTo(MovableElement me, Cell c) {
+        Cell actualCell = me.getCell();
+        int x = actualCell.getX();
+        int y = actualCell.getY();
+        int finalX = c.getX();
+        int finalY = c.getY();
+
+        while (x != finalX && y != finalY) {
+            if (y > finalY) { // Has to go top
+                while(this.move(me, 0, -1)) {
+                    y--;
+                }
+            } else if (y < finalY) { // Has to go bot
+                while(this.move(me, 0, 1)) {
+                    y++;
+                }
+            }
+
+            if (x > finalX) { // Has to go left
+                while(this.move(me, -1, 0)) {
+                    x--;
+                }
+            } else if (x > finalX){ // Has to go right
+                while(this.move(me, 1, 0)) {
+                    x++;
+                }
+            }
+        }
+    }
 
     public void loseLife (){
         this.lives=this.lives-1;

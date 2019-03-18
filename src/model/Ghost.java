@@ -8,15 +8,26 @@ import java.util.Objects;
 public class Ghost extends MovableElement {
 
     private boolean isVulnerable;
+    private boolean isRegenerating;
     private GhostColor color;
 
     public Ghost(Cell cell, GhostColor color) {
         super(cell);
         this.color = color;
+        this.isVulnerable = false;
+        this.isRegenerating = false;
     }
 
     public GhostColor getColor() {
         return color;
+    }
+
+    public boolean getIsRegenerating() {
+        return isRegenerating;
+    }
+
+    public void setIsRegenerating(boolean regenerating) {
+        isRegenerating = regenerating;
     }
 
     public boolean getIsVulnerable() {
