@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Class representing a cell of the game
@@ -12,15 +13,15 @@ public class Cell {
     
     private int x;
     private int y;
-    private boolean isWall;
+    private final boolean isWall;
     private StaticElement staticElement;
     private ArrayList<MovableElement> movableElementList;
 
-    public Cell(int x, int y, boolean isWall, StaticElement staticElement) {
+    public Cell(int x, int y, boolean isWall) {
         this.x = x;
         this.y = y;
         this.isWall = isWall;
-        this.staticElement = staticElement;
+        this.staticElement = null;
         this.movableElementList = new ArrayList<MovableElement>();
     }
 
@@ -32,12 +33,32 @@ public class Cell {
         return y;
     }
 
-    public void addMovableElement(MovableElement me){
-
+    public boolean getIsWall() {
+        return isWall;
     }
 
-    public void removeMovableElement(MovableElement me){
+    public StaticElement getStaticElement() {
+        return staticElement;
+    }
 
+    public ArrayList<MovableElement> getMovableElementList() {
+        return movableElementList;
+    }
+
+    /**
+     * Add a new element to the cell
+     * @param me : MovableElement to add
+     */
+    public void addMovableElement(MovableElement me){
+        this.movableElementList.add(me);
+    }
+
+    /**
+     * Remove a mobile element to the cell
+     * @param me : MovableElement to remove
+     */
+    public void removeMovableElement(MovableElement me){
+        this.movableElementList.remove(me);
     }
 
     public void addStaticElement(StaticElement se){
@@ -46,5 +67,22 @@ public class Cell {
 
     public void removeStaticElement (StaticElement se){
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cell cell = (Cell) o;
+        return x == cell.x &&
+                y == cell.y &&
+                isWall == cell.isWall &&
+                Objects.equals(staticElement, cell.staticElement) &&
+                Objects.equals(movableElementList, cell.movableElementList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, isWall, staticElement, movableElementList);
     }
 }

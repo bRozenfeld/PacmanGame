@@ -15,7 +15,14 @@ public abstract class MovableElement {
         this.cell = cell;
     }
 
+    /**
+     * @return Cell containing this movable element
+     */
     public Cell getCell() {
         return cell;
+    }
+
+    public void setCell(Cell cell) {
+        this.cell = cell;
     }
 }

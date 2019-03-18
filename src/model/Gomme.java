@@ -10,4 +10,8 @@ public class Gomme extends StaticElement {
         super(value);
         this.isSuper = isSuper;
     }
+
+    public boolean getIsSuper() {
+        return isSuper;
+    }
 }
