@@ -63,7 +63,45 @@ public class Game {
     private int ghostEaten;
 
     /**
-     * Initialize a new Game
+     * 2D array representing the board
+     * 0 : wall
+     * 1 : cell with gomme
+     * 2 : cell with super gomme
+     * 3 : starting cell for pacman
+     * 4 : starting cell for a ghost
+     * 5 : cell where bonus will appear
+     */
+    private int[][] board = {
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,4,1,1,1,1,0,0,0,1,1,1,1,4,0},
+            {0,1,0,1,0,1,1,0,1,1,0,1,0,1,0},
+            {0,1,0,2,0,0,1,0,1,0,0,2,0,1,0},
+            {0,1,0,1,1,0,1,0,1,0,1,1,0,1,0},
+            {0,1,0,0,1,1,1,1,1,1,1,0,0,1,0},
+            {0,1,1,1,1,0,0,1,0,0,1,1,1,1,0},
+            {0,1,0,0,1,0,1,1,1,0,1,0,0,1,0},
+            {0,1,0,1,1,0,0,0,0,0,1,1,0,1,0},
+            {0,1,1,1,0,0,0,5,0,0,0,1,1,1,0},
+            {0,1,0,1,0,1,1,1,1,1,0,1,0,1,0},
+            {0,1,0,2,1,1,0,1,0,1,1,2,0,1,0},
+            {0,1,0,0,1,0,0,1,0,0,1,0,0,1,0},
+            {0,4,1,1,1,1,1,3,1,1,1,1,1,4,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+
+    };
+
+    public Game() {
+        this.initGame();
+        this.level = 1;
+        this.lives = 3;
+        this.score = 0;
+        this.ghostEaten = 0;
+        this.bestScore = this.readBestScore();
+
+    }
+
+    /**
+     * Initialize a new Game without passing a board
      * @param pacman : the pacman in the game
      */
     public Game(Pacman pacman,  ArrayList<Cell> cellList, int numberGommes, ArrayList<Ghost> ghostList) {
@@ -78,18 +116,29 @@ public class Game {
         this.ghostEaten = 0;
     }
 
-    public Game(int level,int lives,int score,Pacman pacman, ArrayList<Cell> cellList, int numberGommes,
-                ArrayList<Ghost> ghostList) {
+    /**
+     * Initialize a new game passing a board as an argument
+     * @param pacman
+     * @param cellList
+     * @param numberGommes
+     * @param ghostList
+     * @param board
+     */
+    public Game(Pacman pacman,  ArrayList<Cell> cellList, int numberGommes, ArrayList<Ghost> ghostList,
+                int[][] board) {
         this.cellList=cellList;
         this.ghostList=ghostList;
-        this.numberGommes = numberGommes;
         this.pacman=pacman;
-        this.bestScore = this.getBestScore();
-        this.level=level;
-        this.score=score;
-        this.lives=lives;
+        this.numberGommes = numberGommes;
+        this.bestScore=0;
+        this.level=1;
+        this.lives=3;
+        this.score=0;
         this.ghostEaten = 0;
+        this.board = board;
     }
+
+
 
     public int getLives() {
         return lives;
@@ -225,6 +274,80 @@ public class Game {
         this.level++;
     }
 
+    /**
+     * 0 : wall
+     * 1 : gomme
+     * 2 : super gomme
+     * 3 : pacman
+     * 4 : ghost
+     */
+    private void initGame() {
+        for(int i = 0; i < this.board.length; i++) {
+            for(int j = 0; j < this.board.length; j++) {
+                if(this.board[i][j] == 0) {
+                    Cell c = new Cell(i, j, true);
+                    this.cellList.add(c);
+                }
+                else if (this.board[i][j] == 1) {
+                    Gomme g = new Gomme(10, false);
+                    Cell c = new Cell(i,j,false,g,g);
+                    this.cellList.add(c);
+                    this.numberGommes++;
+                }
+                else if (this.board[i][j] == 2) {
+                    Gomme g = new Gomme(50, true);
+                    Cell c = new Cell(i,j,false,g,g);
+                    this.cellList.add(c);
+                    this.numberGommes++;
+                }
+                else if(this.board[i][j] == 3) {
+                    Cell c = new Cell(i,j,false);
+                    this.pacman = new Pacman(c,c);
+                    c.addMovableElement(pacman);
+                    this.cellList.add(c);
+                }
+                else if(this.board[i][j] == 4) {
+                    Cell c = new Cell(i,j,false);
+                    Ghost g = new Ghost(c,c);
+                    c.addMovableElement(g);
+                    this.cellList.add(c);
+                    this.ghostList.add(g);
+                }
+                else if(this.board[i][j] == 5) {
+                    Cell c = new Cell(i,j,false);
+                    Bonus bonus = new Bonus(100, TypeBonus.Cherry, c);
+                }
+            }
+        }
+    }
+
+    /**
+     * Initialize the bonus for the corresponding level
+     * @param c : Cell where the Bonus should appear
+     */
+    private void setBonus(Cell c) {
+        if(this.level == 2) {
+            this.bonus = new Bonus(300, TypeBonus.Strawberry, c);
+        }
+        else if (this.level == 3 || this.level == 4) {
+            this.bonus = new Bonus(500, TypeBonus.Orange, c);
+        }
+        else if (this.level == 5 || this.level == 6) {
+            this.bonus = new Bonus(700, TypeBonus.Orange, c);
+        }
+        else if (this.level == 7 || this.level == 8) {
+            this.bonus = new Bonus(1000, TypeBonus.Melon, c);
+        }
+        else if(this.level == 9 || this.level == 10) {
+            this.bonus = new Bonus(2000, TypeBonus.Galaxian, c);
+        }
+        else if(this.level == 11 || this.level == 12) {
+            this.bonus = new Bonus(3000, TypeBonus.Bell, c);
+        }
+        else if(this.level >= 13) {
+            this.bonus = new Bonus(5000, TypeBonus.Key, c);
+        }
+    }
 
     private void pacmanMeetGhost(Ghost g) {
         // pacman eat the ghost
@@ -274,7 +397,7 @@ public class Game {
      * Get the best score written in the file bestScore.txt in the res folder
      * @return int : best score
      */
-     private int getBestScore() {
+     private int readBestScore() {
          BufferedReader bIn = null;
          String s = null;
          int res = 0;

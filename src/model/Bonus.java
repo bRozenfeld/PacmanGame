@@ -16,4 +16,5 @@ public class Bonus extends StaticElement {
     public Cell getCell() {
         return cell;
     }
+
 }
