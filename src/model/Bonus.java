@@ -6,7 +6,6 @@ package model;
 public class Bonus extends StaticElement {
     private TypeBonus typeBonus;
     private final Cell cell;
-    private int test;
 
     public Bonus(int value, TypeBonus typeBonus, Cell c) {
         super(value);
