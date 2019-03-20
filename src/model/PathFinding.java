@@ -7,7 +7,6 @@ import java.util.Stack;
 public class PathFinding {
 
     public Stack<Cell> getWay(ArrayList<Cell> graph, Cell beginCell, Cell endCell) {
-
         Stack<Cell> res = new Stack<>(); //stack containing the way
         CellComparator cp = new CellComparator();
 
@@ -20,14 +19,18 @@ public class PathFinding {
         while(!openList.isEmpty()) {
 
             Cell c = openList.remove();
+
+            /* To debug
             System.out.println("Cell : " + c);
             System.out.println("Voisins: ");
-
+            */
             for(Cell v : this.getAdjacentCells(graph,c, endCell, closedList)) {
 
+                /*
                 System.out.println(v);
                 System.out.println("V parent : ");
                 System.out.println(c.getPreviousCell());
+                */
 
                 if(!openList.contains(v) && !(closedList.contains(v))) {
                     openList.add(v);

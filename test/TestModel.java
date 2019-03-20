@@ -88,7 +88,7 @@ public class TestModel {
     private void testMove() {
         int[][] board = {
                 {0,0,0,0,0,0,0,0},
-                {0,2,1,1,1,1,1,0},
+                {0,3,1,1,1,1,1,0},
                 {0,1,0,0,0,1,0,0},
                 {0,1,1,1,1,1,1,0},
                 {0,0,0,0,1,0,1,0},
@@ -97,16 +97,35 @@ public class TestModel {
         };
         this.displayBoard(board);
 
-        Game g = initGame(board);
-        Pacman p = g.getPacman();
-        Cell endCell = new Cell(5,6,false);
+        //Game g = initGame(board);
 
+        Game g = new Game(board);
+        Pacman p = g.getPacman();
+        p.displayPosition();
+
+        Cell endCell = new Cell(5,6,false);
         PathFinding pf = new PathFinding();
         Stack<Cell> s = pf.getWay(g.getCellList(), p.getCell(), endCell);
-        System.out.println("?");
         g.move(p,s);
         p.displayPosition();
 
+        endCell = new Cell(5,1,false);
+        pf = new PathFinding();
+        s = pf.getWay(g.getCellList(), p.getCell(), endCell);
+        g.move(p,s);
+        p.displayPosition();
+
+        endCell = new Cell(1,6,false);
+        pf = new PathFinding();
+        s = pf.getWay(g.getCellList(), p.getCell(), endCell);
+        g.move(p,s);
+        p.displayPosition();
+
+        endCell = new Cell(1,0,false);
+        pf = new PathFinding();
+        s = pf.getWay(g.getCellList(), p.getCell(), endCell);
+        g.move(p,s);
+        p.displayPosition();
     }
 
 

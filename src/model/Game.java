@@ -71,6 +71,8 @@ public class Game {
      * 3 : starting cell for pacman
      * 4 : starting cell for a ghost
      * 5 : cell where bonus will appear
+     *
+     * P e à supprimer
      */
     private int[][] board = {
             {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -91,14 +93,16 @@ public class Game {
 
     };
 
-    public Game() {
-        this.initGame();
+    public Game(int[][] board) {
+        this.cellList = new ArrayList<>();
+        this.ghostList = new ArrayList<>();
+        this.initGame(board);
         this.level = 1;
         this.lives = 3;
         this.score = 0;
         this.ghostEaten = 0;
         this.bestScore = this.readBestScore();
-
+        this.board = board;
     }
 
     /**
@@ -276,39 +280,39 @@ public class Game {
      * 3 : pacman
      * 4 : ghost
      */
-    private void initGame() {
-        for(int i = 0; i < this.board.length; i++) {
-            for(int j = 0; j < this.board.length; j++) {
-                if(this.board[i][j] == 0) {
+    private void initGame(int [][] board) {
+        for(int i = 0; i < board.length; i++) {
+            for(int j = 0; j < board.length; j++) {
+                if(board[i][j] == 0) {
                     Cell c = new Cell(i, j, true);
                     this.cellList.add(c);
                 }
-                else if (this.board[i][j] == 1) {
+                else if (board[i][j] == 1) {
                     Gomme g = new Gomme(10, false);
                     Cell c = new Cell(i,j,false,g,g);
                     this.cellList.add(c);
                     this.numberGommes++;
                 }
-                else if (this.board[i][j] == 2) {
+                else if (board[i][j] == 2) {
                     Gomme g = new Gomme(50, true);
                     Cell c = new Cell(i,j,false,g,g);
                     this.cellList.add(c);
                     this.numberGommes++;
                 }
-                else if(this.board[i][j] == 3) {
+                else if(board[i][j] == 3) {
                     Cell c = new Cell(i,j,false);
                     this.pacman = new Pacman(c,c);
                     c.addMovableElement(pacman);
                     this.cellList.add(c);
                 }
-                else if(this.board[i][j] == 4) {
+                else if(board[i][j] == 4) {
                     Cell c = new Cell(i,j,false);
                     Ghost g = new Ghost(c,c);
                     c.addMovableElement(g);
                     this.cellList.add(c);
                     this.ghostList.add(g);
                 }
-                else if(this.board[i][j] == 5) {
+                else if(board[i][j] == 5) {
                     Cell c = new Cell(i,j,false);
                     Bonus bonus = new Bonus(100, TypeBonus.Cherry, c);
                 }
