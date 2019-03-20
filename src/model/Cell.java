@@ -18,6 +18,11 @@ public class Cell {
     private StaticElement staticElement;
     private ArrayList<MovableElement> movableElementList;
 
+    // Partie pour le pathfinding
+    private Cell previousCell; //pour reconstituer le chemin
+    private int cost; // cost to move from cell to cell
+    private int heuristic; // distance between cell and the ending cell
+
 
     public Cell(int x, int y, boolean isWall) {
         this.x = x;
@@ -100,5 +105,33 @@ public class Cell {
     @Override
     public int hashCode() {
         return Objects.hash(x, y, isWall, staticElement, movableElementList);
+    }
+
+
+
+    // Partie pour le pathfinding
+
+    public Cell getPreviousCell() {
+        return previousCell;
+    }
+
+    public void setPreviousCell(Cell previousCell) {
+        this.previousCell = previousCell;
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+
+    public int getHeuristic() {
+        return heuristic;
+    }
+
+    public void setHeuristic(int heuristic) {
+        this.heuristic = heuristic;
     }
 }
