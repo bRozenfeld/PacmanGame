@@ -157,6 +157,10 @@ public class Game {
         return this.pacman;
     }
 
+    public ArrayList<Cell> getCellList() {
+        return this.cellList;
+    }
+
     /**
      * Move any MovableElement in the given direction
      * @param me : MovableElement to move

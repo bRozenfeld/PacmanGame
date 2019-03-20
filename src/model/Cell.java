@@ -107,7 +107,10 @@ public class Cell {
         return Objects.hash(x, y, isWall, staticElement, movableElementList);
     }
 
-
+    public String toString() {
+        String s = new String("(" + this.x + "," + this.y + ")  Wall: " + this.isWall + "\n");
+        return s;
+    }
 
     // Partie pour le pathfinding
 

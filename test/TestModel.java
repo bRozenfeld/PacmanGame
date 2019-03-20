@@ -1,6 +1,7 @@
 import model.*;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 // 0:wall
 // 1:gomme
@@ -16,15 +17,17 @@ public class TestModel {
     private void displayBoard(int[][] board) {
 
         System.out.println("Board: ");
-        System.out.println("0->wall ; 1->gomme ; 2->pacman ; 3->ghost");
-        System.out.println("4->supergomme ; 5->bonus ; 6->void");
+        System.out.println("0->wall ; 1->gomme ; 2->pacman ; 3->ghost ; 4->supergomme ; 5->bonus ; 6->void");
+        System.out.println();
 
         for(int i = 0; i < board.length; i++) {
-            for(int j = 0; j < board.length; j++) {
+            for(int j = 0; j < board[0].length; j++) {
                 System.out.print(board[i][j]);
             }
             System.out.println();
         }
+
+        System.out.println();
     }
 
     private Game initGame(int[][] board) {
@@ -34,7 +37,7 @@ public class TestModel {
         Pacman pacman = null;
 
         for(int i = 0; i < board.length; i++) {
-            for(int j = 0; j < board.length; j++) {
+            for(int j = 0; j < board[0].length; j++) {
                 if(board[i][j] == 0) {
                     Cell c = new Cell(i, j, true);
                     cellList.add(c);
@@ -83,31 +86,28 @@ public class TestModel {
     }
 
     private void testMove() {
-        int [][] board = {
-                {0,0,0,0,0,0},
-                {0,2,6,6,6,0},
-                {0,6,0,0,6,0},
-                {0,6,0,0,6,0},
-                {0,6,6,6,6,0},
-                {0,0,0,0,0,0}
+        int[][] board = {
+                {0,0,0,0,0,0,0,0},
+                {0,2,1,1,1,1,1,0},
+                {0,1,0,0,0,1,0,0},
+                {0,1,1,1,1,1,1,0},
+                {0,0,0,0,1,0,1,0},
+                {0,1,1,1,1,0,1,0},
+                {0,0,0,0,0,0,0,0},
         };
         this.displayBoard(board);
 
         Game g = initGame(board);
         Pacman p = g.getPacman();
+        Cell endCell = new Cell(5,6,false);
 
-        System.out.println("Position Pacman before move: ");
-        p.displayPosition(); // (1,1)
+        PathFinding pf = new PathFinding();
+        Stack<Cell> s = pf.getWay(g.getCellList(), p.getCell(), endCell);
+        System.out.println();
+        while(!s.empty()){
+            System.out.println(s.pop());
+        }
 
-        g.move(p,1,0);
-        p.displayPosition(); // (2,1)
-
-        g.move(p,0,-1);
-        p.displayPosition(); // (2,1)
-
-        Cell c = new Cell(3,4,false);
-        g.moveTo(p, c);
-        p.displayPosition(); // (3,4)
     }
 
 
