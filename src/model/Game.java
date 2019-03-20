@@ -210,35 +210,25 @@ public class Game {
     /**
      * Move the movableElement into the given cell
      * @param me : MovableElement to move
-     * @param c : Cell to go
+     * @param futurCell : Cell to go
      */
-    public void moveTo(MovableElement me, Cell c) {
+    public void moveTo(MovableElement me, Cell futurCell) {
         Cell actualCell = me.getCell();
-        int x = actualCell.getX();
-        int y = actualCell.getY();
-        int finalX = c.getX();
-        int finalY = c.getY();
+        actualCell.removeMovableElement(me);
+        futurCell.addMovableElement(me);
+        me.setCell(futurCell);
+    }
 
-        while (x != finalX && y != finalY) {
-            if (y > finalY) { // Has to go top
-                while(this.move(me, 0, -1)) {
-                    y--;
-                }
-            } else if (y < finalY) { // Has to go bot
-                while(this.move(me, 0, 1)) {
-                    y++;
-                }
-            }
 
-            if (x > finalX) { // Has to go left
-                while(this.move(me, -1, 0)) {
-                    x--;
-                }
-            } else if (x > finalX){ // Has to go right
-                while(this.move(me, 1, 0)) {
-                    x++;
-                }
-            }
+    /**
+     * Move an element by following the cell contained in the stack
+     * @param me : MovableElement to move
+     * @param stack : Stack<Cell> containing the cells to go
+     */
+    public void move(MovableElement me, Stack<Cell> stack) {
+        while(!stack.empty()){
+            Cell c = stack.pop();
+            this.moveTo(me, c);
         }
     }
 

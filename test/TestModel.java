@@ -103,10 +103,9 @@ public class TestModel {
 
         PathFinding pf = new PathFinding();
         Stack<Cell> s = pf.getWay(g.getCellList(), p.getCell(), endCell);
-        System.out.println();
-        while(!s.empty()){
-            System.out.println(s.pop());
-        }
+        System.out.println("?");
+        g.move(p,s);
+        p.displayPosition();
 
     }
 

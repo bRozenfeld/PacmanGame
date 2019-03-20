@@ -8,9 +8,6 @@ public class PathFinding {
 
     public Stack<Cell> getWay(ArrayList<Cell> graph, Cell beginCell, Cell endCell) {
 
-        Stack<Cell> wrongRes = new Stack<>();
-        wrongRes.add(new Cell(9,9,true));
-
         Stack<Cell> res = new Stack<>(); //stack containing the way
         CellComparator cp = new CellComparator();
 
@@ -20,13 +17,7 @@ public class PathFinding {
         beginCell.setCost(0);
         openList.add(beginCell);
 
-        int i = 1;// just to debug
         while(!openList.isEmpty()) {
-
-
-            System.out.println("tour: " + i);
-
-
 
             Cell c = openList.remove();
             System.out.println("Cell : " + c);
@@ -50,18 +41,10 @@ public class PathFinding {
 
             closedList.add(c);
 
-            System.out.println("Closed List: ");
-            System.out.println(closedList);
-            System.out.println();
-            System.out.println("Open list");
-            System.out.println(openList);
-
-            System.out.println("Fin tour");
-            System.out.println();
-            i++;
         }
 
-        return wrongRes;
+        // maybe need modif to throw exception ause it means it never find the cell
+        return res;
     }
 
     /**
@@ -70,15 +53,13 @@ public class PathFinding {
      * @return
      */
     private Stack<Cell> buildWay(Cell c, Cell beginCell) {
-        System.out.println("build way");
         Stack<Cell> res = new Stack<>();
+        res.push(c);
         Cell tmp = c.getPreviousCell();
-        System.out.println(tmp);
         res.push(tmp);
         while(!tmp.equals(beginCell)){
             res.push(tmp);
             tmp = tmp.getPreviousCell();
-            System.out.println(tmp);
         }
         return res;
     }
