@@ -103,29 +103,42 @@ public class TestModel {
         Pacman p = g.getPacman();
         p.displayPosition();
 
-        Cell endCell = new Cell(5,6,false);
+        g.movePacman(Direction.Down);
+        p.displayPosition();
+
+
+        g.movePacman(Direction.Left);
+        p.displayPosition();
+
+        g.movePacman(Direction.Right);
+        p.displayPosition();
+
+
+
+        Cell endCell = new Cell(6,5,false);
         PathFinding pf = new PathFinding();
         Stack<Cell> s = pf.getWay(g.getCellList(), p.getCell(), endCell);
         g.move(p,s);
         p.displayPosition();
 
-        endCell = new Cell(5,1,false);
+        endCell = new Cell(1,5,false);
         pf = new PathFinding();
         s = pf.getWay(g.getCellList(), p.getCell(), endCell);
         g.move(p,s);
         p.displayPosition();
 
-        endCell = new Cell(1,6,false);
+        endCell = new Cell(6,1,false);
         pf = new PathFinding();
         s = pf.getWay(g.getCellList(), p.getCell(), endCell);
         g.move(p,s);
         p.displayPosition();
 
-        endCell = new Cell(1,0,false);
+        endCell = new Cell(1,1,false);
         pf = new PathFinding();
         s = pf.getWay(g.getCellList(), p.getCell(), endCell);
         g.move(p,s);
         p.displayPosition();
+
     }
 
 

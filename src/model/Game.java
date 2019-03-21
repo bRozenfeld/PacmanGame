@@ -167,6 +167,10 @@ public class Game {
         return this.cellList;
     }
 
+    public ArrayList<Ghost> getGhostList() {
+        return this.ghostList;
+    }
+
     public int[][] getBoard() {
         return this.board;
     }
@@ -243,6 +247,51 @@ public class Game {
     }
 
     /**
+     * Move Pacman into the given direction until he meets a wall
+     * @param direction
+     */
+    public void movePacman(Direction direction) {
+        Cell tmp = this.getNextCell(this.pacman.getCell(), direction);
+        while(tmp.getIsWall() != true) {
+            this.moveTo(this.pacman, tmp);
+            tmp = this.getNextCell(tmp, direction);
+        }
+        System.out.println("Pacman position : " + this.pacman.getCell());
+
+    }
+
+    private Cell getNextCell(Cell c, Direction dir) {
+        Cell res = null;
+        switch (dir) {
+            case Up:
+                for(Cell cell : this.cellList) {
+                    if(c.getX() == cell.getX()&& c.getY() == cell.getY()+1)
+                        res = cell;
+                }
+                break;
+            case Down:
+                for(Cell cell : this.cellList) {
+                    if(c.getX() == cell.getX() && c.getY() == cell.getY()-1)
+                        res = cell;
+                }
+                break;
+            case Left:
+                for(Cell cell : this.cellList) {
+                    if(c.getX() == cell.getX()+1 && c.getY() == cell.getY())
+                        res = cell;
+                }
+                break;
+            case Right:
+                for(Cell cell : this.cellList) {
+                    if(c.getX() == cell.getX()-1 && c.getY() == cell.getY())
+                        res = cell;
+                }
+                break;
+        }
+        return res;
+    }
+
+    /**
      * Compare the actual score with the best score when the game is over
      * Then call a method the write the best score in a file
      * @return int : the maximum between score and bestscore
@@ -289,31 +338,31 @@ public class Game {
      */
     private void initGame(int [][] board) {
         for(int i = 0; i < board.length; i++) {
-            for(int j = 0; j < board.length; j++) {
+            for(int j = 0; j < board[0].length; j++) {
                 if(board[i][j] == 0) {
-                    Cell c = new Cell(i, j, true);
+                    Cell c = new Cell(j, i, true);
                     this.cellList.add(c);
                 }
                 else if (board[i][j] == 1) {
                     Gomme g = new Gomme(10, false);
-                    Cell c = new Cell(i,j,false,g,g);
+                    Cell c = new Cell(j,i,false,g,g);
                     this.cellList.add(c);
                     this.numberGommes++;
                 }
                 else if (board[i][j] == 2) {
                     Gomme g = new Gomme(50, true);
-                    Cell c = new Cell(i,j,false,g,g);
+                    Cell c = new Cell(j,i,false,g,g);
                     this.cellList.add(c);
                     this.numberGommes++;
                 }
                 else if(board[i][j] == 3) {
-                    Cell c = new Cell(i,j,false);
+                    Cell c = new Cell(j,i,false);
                     this.pacman = new Pacman(c,c);
                     c.addMovableElement(pacman);
                     this.cellList.add(c);
                 }
                 else if(board[i][j] == 4) {
-                    Cell c = new Cell(i,j,false);
+                    Cell c = new Cell(j,i,false);
                     Ghost g = new Ghost(c,GhostColor.Orange,c);
                     c.addMovableElement(g);
                     this.cellList.add(c);

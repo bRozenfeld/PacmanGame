@@ -37,12 +37,13 @@ public class GraphicPacman extends JPanel {
         int w = getSize().width -1;
         int h = getSize().height -1;
 
+        g2d.setBackground(Color.BLACK);
         g2d.setColor(Color.YELLOW);
         g2d.fillOval(x,y,w,h);
 
         if(this.mouthOpen == true) {
             Polygon polygon = new Polygon();
-            g2d.setColor(Color.WHITE);
+            g2d.setColor(Color.BLACK);
             switch(this.direction) {
                 case Up:
                     polygon.addPoint(0,0);

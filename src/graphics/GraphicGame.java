@@ -1,7 +1,9 @@
 package graphics;
 
 import model.Cell;
+import model.Direction;
 import model.Game;
+import model.Ghost;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 /**
  * Class representing the main frame of the game
@@ -16,8 +19,9 @@ import java.awt.event.MouseListener;
 public class GraphicGame extends JFrame {
 
     private Game game;
-
     private boolean isRunning;
+
+    private ArrayList<GraphicCell> listCell;
 
     private JPanel pBoard; // panel of the game
     private JPanel pInfo;
@@ -43,11 +47,14 @@ public class GraphicGame extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setVisible(true);
+
         this.isRunning = false;
+        this.game = game;
 
         this.setFocusable(true);
     }
 
+    /************* Initialisation part *********************/
     private void initComponents(Game g) {
         this.initBoard(g);
         this.add(this.pBoard, BorderLayout.CENTER);
@@ -66,6 +73,7 @@ public class GraphicGame extends JFrame {
      * @param g
      */
     private void initBoard(Game g) {
+        this.listCell = new ArrayList<>();
         this.pBoard = new JPanel();
         this.pBoard.setLayout(new GridLayout(g.getBoard().length, g.getBoard()[0].length));
         this.pBoard.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
@@ -80,6 +88,7 @@ public class GraphicGame extends JFrame {
                 gc.setBackground(Color.BLACK);
             }
             pBoard.add(gc);
+            this.listCell.add(gc);
         }
 
 
@@ -137,6 +146,7 @@ public class GraphicGame extends JFrame {
         return pSouth;
     }
 
+    /************ Update Part *******************************/
     private void updatebStart(){
         if (this.isRunning==false) {
             this.bSTART.setText("STOP");
@@ -147,11 +157,41 @@ public class GraphicGame extends JFrame {
             this.bSTART.setText("START");
             this.isRunning=false;
         }
+
+        try {
+            this.run();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
-//Inner class
+    private void render() {
+        this.repaint();
+        this.revalidate();
+    }
 
-        class RunListener implements MouseListener {
+    private void updateGame() {
+        Cell pacmanPosition = this.game.getPacman().getCell();
+        for(Ghost g : this.game.getGhostList()) {
+            this.game.moveTo(g,pacmanPosition);
+        }
+    }
+
+    /************* Loop Game Part **************************/
+    public void run() throws InterruptedException {
+        while(this.isRunning) {
+            this.updateGame();
+            this.render();
+            Thread.sleep(10000);
+
+            this.displayGhostPosition();
+        }
+    }
+
+
+
+    /************ Inner class Part ***************************/
+    class RunListener implements MouseListener {
 
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -193,12 +233,16 @@ public class GraphicGame extends JFrame {
             System.out.println(key);
             switch (key) {
                 case KeyEvent.VK_LEFT:
+                    GraphicGame.this.game.movePacman(Direction.Left);
                     break;
                 case KeyEvent.VK_RIGHT:
+                    GraphicGame.this.game.movePacman(Direction.Right);
                     break;
                 case KeyEvent.VK_UP:
+                    GraphicGame.this.game.movePacman(Direction.Up);
                     break;
                 case KeyEvent.VK_DOWN:
+                    GraphicGame.this.game.movePacman(Direction.Down);
                     break;
             }
         }
@@ -209,4 +253,11 @@ public class GraphicGame extends JFrame {
         }
     }
 
+
+    /************ methodes de merde *****************/
+    private void displayGhostPosition() {
+        for(Ghost g : this.game.getGhostList()) {
+            System.out.println(g.getCell());
+        }
+    }
 }
