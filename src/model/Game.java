@@ -314,7 +314,7 @@ public class Game {
                 }
                 else if(board[i][j] == 4) {
                     Cell c = new Cell(i,j,false);
-                    Ghost g = new Ghost(c,c);
+                    Ghost g = new Ghost(c,GhostColor.Orange,c);
                     c.addMovableElement(g);
                     this.cellList.add(c);
                     this.ghostList.add(g);

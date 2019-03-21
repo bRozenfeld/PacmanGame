@@ -9,7 +9,7 @@ import java.awt.*;
 /**
  * Class representing the graphic part of Pacman
  */
-public class GraphicPacman extends Component {
+public class GraphicPacman extends JPanel {
 
     private Pacman pacman;
     private boolean mouthOpen;
@@ -18,14 +18,19 @@ public class GraphicPacman extends Component {
     public GraphicPacman() {
         super();
         this.mouthOpen = true;
-        this.direction = Direction.Right;
+        this.direction = Direction.Left;
     }
 
     public GraphicPacman(Pacman pacman) {
+        super();
         this.pacman = pacman;
+        this.mouthOpen = true;
+        this.direction = Direction.Left;
     }
 
     public void paint(Graphics g) {
+        this.setSize(this.getParent().getSize());
+
         Graphics2D g2d = (Graphics2D)g;
         int x = 0;
         int y = 0;

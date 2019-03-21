@@ -5,6 +5,8 @@ import model.Game;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -43,17 +45,20 @@ public class GraphicGame extends JFrame {
         this.setVisible(true);
         this.isRunning = false;
 
-
+        this.setFocusable(true);
     }
 
     private void initComponents(Game g) {
         this.initBoard(g);
         this.add(this.pBoard, BorderLayout.CENTER);
+
         JPanel pSouth = this.initiPanelSouth(g);
         this.add(pSouth, BorderLayout.SOUTH);
+
         this.initPanelBestScore(g);
         this.add(this.pBestScore, BorderLayout.NORTH);
 
+        this.addKeyListener(new BoardListener());
     }
 
     /**
@@ -64,11 +69,10 @@ public class GraphicGame extends JFrame {
         this.pBoard = new JPanel();
         this.pBoard.setLayout(new GridLayout(g.getBoard().length, g.getBoard()[0].length));
         this.pBoard.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
-        // ne pas oublier les border
 
         for(Cell c : g.getCellList()) {
             GraphicCell gc = new GraphicCell(c);
-            gc.setBorder(BorderFactory.createLineBorder(Color.RED));
+            gc.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
             if(c.getIsWall() == true) {
                 gc.setBackground(Color.BLUE);
             }
@@ -78,7 +82,7 @@ public class GraphicGame extends JFrame {
             pBoard.add(gc);
         }
 
-        Cell pacmanCell = g.getPacman().getCell();
+
 
     }
 
@@ -146,33 +150,63 @@ public class GraphicGame extends JFrame {
     }
 
 //Inner class
-    class RunListener implements MouseListener {
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        GraphicGame.this.updatebStart();
+        class RunListener implements MouseListener {
 
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            GraphicGame.this.updatebStart();
+
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+
+        }
     }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
+    class BoardListener implements KeyListener {
 
+        @Override
+        public void keyTyped(KeyEvent e) {
+
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            int key = e.getKeyCode();
+            System.out.println(key);
+            switch (key) {
+                case KeyEvent.VK_LEFT:
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    break;
+                case KeyEvent.VK_UP:
+                    break;
+                case KeyEvent.VK_DOWN:
+                    break;
+            }
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+
+        }
     }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
-}
 
 }

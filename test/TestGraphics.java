@@ -20,7 +20,13 @@ public class TestGraphics {
 
         GraphicGhost gg = new GraphicGhost(g);
 
-        frame.add(gg);
+        JPanel jp1 = new JPanel();
+        jp1.add(gg);
+        JPanel jp2 = new JPanel();
+        jp2.add(gp);
+
+        frame.add(jp1);
+        frame.add(jp2);
 
         frame.setBounds(200,200,400,400);
         frame.setVisible(true);
