@@ -5,6 +5,8 @@ import model.Game;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
  * Class representing the main frame of the game
@@ -13,11 +15,15 @@ public class GraphicGame extends JFrame {
 
     private Game game;
 
+    private boolean isRunning;
+
     private JPanel pBoard; // panel of the game
     private JPanel pInfo;
     private JPanel pStartStop;
     private JPanel pBestScore;
+
     private JButton bSTART;
+
     private JLabel lBestScore;
     private JLabel  lLives;
     private JLabel  lScore;
@@ -33,6 +39,7 @@ public class GraphicGame extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setVisible(true);
+        this.isRunning = false;
 
 
     }
@@ -81,6 +88,7 @@ public class GraphicGame extends JFrame {
         this.pStartStop.setLayout(new BoxLayout(pStartStop,BoxLayout.X_AXIS));
 
         this.bSTART = new JButton("START");
+        this.bSTART.addMouseListener(new RunListener());
         pStartStop.add(bSTART);
 }
 
@@ -112,7 +120,46 @@ public class GraphicGame extends JFrame {
         return pSouth;
     }
 
+    private void updatebStart(){
+        if (this.isRunning==false) {
+            this.bSTART.setText("STOP");
+            this.isRunning=true;
+        }
 
+        else {
+            this.bSTART.setText("START");
+            this.isRunning=false;
+        }
+    }
 
+//Inner class
+    class RunListener implements MouseListener {
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        GraphicGame.this.updatebStart();
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+}
 
 }
