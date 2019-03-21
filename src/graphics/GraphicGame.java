@@ -96,7 +96,7 @@ public class GraphicGame extends JFrame {
 
     private void initPanelBestScore(Game g) {
         this.pBestScore=new JPanel();
-        this.pBestScore.setLayout(new BoxLayout(pBestScore,BoxLayout.X_AXIS));
+        this.pBestScore.setLayout(new FlowLayout(FlowLayout.CENTER));
         this.lBestScore=new JLabel("Best Score: "+ g.getBestScore());
         this.pBestScore.add(lBestScore);
     }
@@ -106,9 +106,9 @@ public class GraphicGame extends JFrame {
         this.pInfo.setLayout(new BoxLayout(pInfo,BoxLayout.X_AXIS));
         this.lLevel=new JLabel("Level: " + g.getLevel());
         this.pInfo.add(lLevel);
-        this.lLives=new JLabel("Lives: " + g.getLives());
+        this.lLives=new JLabel("               Lives: " + g.getLives());
         this.pInfo.add(lLives);
-        this.lScore=new JLabel("Score: " + g.getScore());
+        this.lScore=new JLabel("               Score: " + g.getScore());
         this.pInfo.add(lScore);
     }
 
