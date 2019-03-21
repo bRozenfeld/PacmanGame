@@ -17,6 +17,11 @@ public class GraphicGame extends JFrame {
     private JPanel pInfo;
     private JPanel pStartStop;
     private JPanel pBestScore;
+    private JButton bSTART;
+    private JLabel lBestScore;
+    private JLabel  lLives;
+    private JLabel  lScore;
+    private JLabel lLevel;
 
     public GraphicGame(String title, int x, int y, int w, int h, Game game) {
         super(title);
@@ -35,6 +40,11 @@ public class GraphicGame extends JFrame {
     private void initComponents(Game g) {
         this.initBoard(g);
         this.add(this.pBoard, BorderLayout.CENTER);
+        JPanel pSouth = this.initiPanelSouth(g);
+        this.add(pSouth, BorderLayout.SOUTH);
+        this.initPanelBestScore(g);
+        this.add(this.pBestScore, BorderLayout.NORTH);
+
     }
 
     /**
@@ -67,16 +77,42 @@ public class GraphicGame extends JFrame {
      * Initialise
      */
     private void initPanelStopStart()  {
+        this.pStartStop=new JPanel();
+        this.pStartStop.setLayout(new BoxLayout(pStartStop,BoxLayout.X_AXIS));
 
+        this.bSTART = new JButton("START");
+        pStartStop.add(bSTART);
+}
+
+    private void initPanelBestScore(Game g) {
+        this.pBestScore=new JPanel();
+        this.pBestScore.setLayout(new BoxLayout(pBestScore,BoxLayout.X_AXIS));
+        this.lBestScore=new JLabel("Best Score: "+ g.getBestScore());
+        this.pBestScore.add(lBestScore);
     }
 
-    private void initPanelBestScore() {
-
+    private void initPanelInfo(Game g) {
+        this.pInfo=new JPanel();
+        this.pInfo.setLayout(new BoxLayout(pInfo,BoxLayout.X_AXIS));
+        this.lLevel=new JLabel("Level: " + g.getLevel());
+        this.pInfo.add(lLevel);
+        this.lLives=new JLabel("Lives: " + g.getLives());
+        this.pInfo.add(lLives);
+        this.lScore=new JLabel("Score: " + g.getScore());
+        this.pInfo.add(lScore);
     }
 
-    private void initPanelInfo() {
-
+    private JPanel initiPanelSouth(Game g){
+        JPanel pSouth=new JPanel();
+        pSouth.setLayout(new BoxLayout(pSouth,BoxLayout.Y_AXIS));
+        this.initPanelInfo(g);
+        pSouth.add(this.pInfo);
+        this.initPanelStopStart();
+        pSouth.add(this.pStartStop);
+        return pSouth;
     }
+
+
 
 
 }

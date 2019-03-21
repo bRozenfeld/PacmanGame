@@ -121,6 +121,7 @@ public class Game {
         this.ghostEaten = 0;
     }
 
+
     /**
      * Initialize a new game passing a board as an argument
      * @param pacman
@@ -144,6 +145,7 @@ public class Game {
     }
 
 
+    public int getBestScore() { return bestScore; }
 
     public int getLives() {
         return lives;

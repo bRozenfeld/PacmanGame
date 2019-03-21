@@ -82,10 +82,18 @@ public class Cell {
         this.movableElementList.remove(me);
     }
 
+    /**
+     * Add a static element to the cell
+     * @param se : MovableElement to remove
+     */
     public void addStaticElement(StaticElement se){
 
     }
 
+    /**
+     * Remove a static element to the cell
+     * @param se : MovableElement to remove
+     */
     public void removeStaticElement (StaticElement se){
 
     }
