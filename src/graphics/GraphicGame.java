@@ -13,7 +13,10 @@ public class GraphicGame extends JFrame {
 
     private Game game;
 
-    private JPanel pBoard;
+    private JPanel pBoard; // panel of the game
+    private JPanel pInfo;
+    private JPanel pStartStop;
+    private JPanel pBestScore;
 
     public GraphicGame(String title, int x, int y, int w, int h, Game game) {
         super(title);
@@ -50,6 +53,20 @@ public class GraphicGame extends JFrame {
             }
             pBoard.add(gc);
         }
+    }
+
+    /**
+     * Initialise
+     */
+    private void initPanelStopStart()  {
+
+    }
+
+    private void initPanelBestScore() {
+
+    }
+
+    private void initPanelInfo() {
 
     }
 
