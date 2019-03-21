@@ -21,6 +21,7 @@ public class GraphicGame extends JFrame {
     private JPanel pInfo;
     private JPanel pStartStop;
     private JPanel pBestScore;
+    private JPanel  pProducers;
 
     private JButton bSTART;
 
@@ -28,6 +29,7 @@ public class GraphicGame extends JFrame {
     private JLabel  lLives;
     private JLabel  lScore;
     private JLabel lLevel;
+
 
     public GraphicGame(String title, int x, int y, int w, int h, Game game) {
         super(title);
@@ -110,6 +112,13 @@ public class GraphicGame extends JFrame {
         this.pInfo.add(lScore);
     }
 
+    private void initPanelProducers(){
+        this.pProducers=new JPanel();
+        this.pProducers.setLayout(new BoxLayout(pProducers,BoxLayout.X_AXIS));
+        JLabel lProducers=new JLabel("By @ROZENFELD Benjamin && @SBAITY Haitam");
+        pProducers.add(lProducers);
+    }
+
     private JPanel initiPanelSouth(Game g){
         JPanel pSouth=new JPanel();
         pSouth.setLayout(new BoxLayout(pSouth,BoxLayout.Y_AXIS));
@@ -117,6 +126,8 @@ public class GraphicGame extends JFrame {
         pSouth.add(this.pInfo);
         this.initPanelStopStart();
         pSouth.add(this.pStartStop);
+        this.initPanelProducers();
+        pSouth.add(this.pProducers);
         return pSouth;
     }
 
