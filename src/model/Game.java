@@ -283,6 +283,7 @@ public class Game {
      * 2 : super gomme
      * 3 : pacman
      * 4 : ghost
+     * 5 : bonus
      */
     private void initGame(int [][] board) {
         for(int i = 0; i < board.length; i++) {
@@ -319,6 +320,7 @@ public class Game {
                 else if(board[i][j] == 5) {
                     Cell c = new Cell(i,j,false);
                     Bonus bonus = new Bonus(100, TypeBonus.Cherry, c);
+                    this.cellList.add(c);
                 }
             }
         }

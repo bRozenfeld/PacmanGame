@@ -27,7 +27,7 @@ public class Launcher {
 
         Game g = new Game(board);
 
-        GraphicGame gg = new GraphicGame("Pacman", 200, 200, 300, 500, g);
+        GraphicGame gg = new GraphicGame("Pacman", 200, 200, 500, 600, g);
 
     }
 }

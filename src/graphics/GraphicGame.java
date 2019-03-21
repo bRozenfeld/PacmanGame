@@ -21,9 +21,14 @@ public class GraphicGame extends JFrame {
     public GraphicGame(String title, int x, int y, int w, int h, Game game) {
         super(title);
         this.setBounds(x,y,w,h);
+
         this.initComponents(game);
         this.initBoard(game);
+
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setResizable(false);
         this.setVisible(true);
+
 
     }
 
@@ -39,12 +44,12 @@ public class GraphicGame extends JFrame {
     private void initBoard(Game g) {
         this.pBoard = new JPanel();
         this.pBoard.setLayout(new GridLayout(g.getBoard().length, g.getBoard()[0].length));
+        this.pBoard.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
         // ne pas oublier les border
-
 
         for(Cell c : g.getCellList()) {
             GraphicCell gc = new GraphicCell(c);
-
+            gc.setBorder(BorderFactory.createLineBorder(Color.RED));
             if(c.getIsWall() == true) {
                 gc.setBackground(Color.BLUE);
             }
@@ -53,6 +58,9 @@ public class GraphicGame extends JFrame {
             }
             pBoard.add(gc);
         }
+
+        Cell pacmanCell = g.getPacman().getCell();
+
     }
 
     /**
