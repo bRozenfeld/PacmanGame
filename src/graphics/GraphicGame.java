@@ -17,6 +17,11 @@ public class GraphicGame extends JFrame {
     private JPanel pInfo;
     private JPanel pStartStop;
     private JPanel pBestScore;
+    private JButton bSTART;
+    private JLabel lBestScore;
+    private JLabel  lLives;
+    private JLabel  lScore;
+    private JLabel lLevel;
 
     public GraphicGame(String title, int x, int y, int w, int h, Game game) {
         super(title);
@@ -59,16 +64,29 @@ public class GraphicGame extends JFrame {
      * Initialise
      */
     private void initPanelStopStart()  {
+        this.pStartStop=new JPanel();
+        this.pStartStop.setLayout(new BoxLayout(pStartStop,BoxLayout.X_AXIS));
+
+        this.bSTART = new JButton("START");
+        pStartStop.add(bSTART);
+}
+
+    private void initPanelBestScore(Game g) {
+        this.pBestScore=new JPanel();
+        this.pBestScore.setLayout(new BoxLayout(pBestScore,BoxLayout.X_AXIS));
+        this.lBestScore=new JLabel("Best Score: ",g.getBestScore());
+    }
+
+    private void initPanelInfo(Game g) {
+        this.pInfo=new JPanel();
+        this.pInfo.setLayout((new BoxLayout(pInfo,BoxLayout.X_AXIS)));
+        this.lLevel=new JLabel("Level: ",g.getLevel());
+        this.lLives=new JLabel("Lives: ",g.getLives());
+        this.lScore=new JLabel("Score: ",g.getScore());
 
     }
 
-    private void initPanelBestScore() {
 
-    }
-
-    private void initPanelInfo() {
-
-    }
 
 
 }

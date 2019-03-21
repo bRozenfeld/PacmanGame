@@ -1,6 +1,6 @@
 package graphics;
 
-import model.Pacman;
+        import model.Pacman;
 
 /**
  * Class representing the graphic part of Pacman
