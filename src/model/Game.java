@@ -165,6 +165,10 @@ public class Game {
         return this.cellList;
     }
 
+    public int[][] getBoard() {
+        return this.board;
+    }
+
     /**
      * Move any MovableElement in the given direction
      * @param me : MovableElement to move
