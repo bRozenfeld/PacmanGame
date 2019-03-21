@@ -20,7 +20,7 @@ public class Ghost extends MovableElement {
 
     public Ghost(Cell cell, GhostColor color, Cell beginCell) {
         super(cell, beginCell);
-
+        this.color = color;
         this.isVulnerable = false;
         this.isRegenerating = false;
     }

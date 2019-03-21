@@ -16,6 +16,7 @@ public class GraphicPacman extends Component {
     private Direction direction;
 
     public GraphicPacman() {
+        super();
         this.mouthOpen = true;
         this.direction = Direction.Right;
     }
