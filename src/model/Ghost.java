@@ -49,6 +49,7 @@ public class Ghost extends MovableElement {
         this.isVulnerable = isVulnerable;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

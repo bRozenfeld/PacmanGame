@@ -13,4 +13,5 @@ public abstract class StaticElement {
     public int getValue() {
         return value;
     }
+
 }

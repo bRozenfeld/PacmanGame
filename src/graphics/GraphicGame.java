@@ -1,9 +1,6 @@
 package graphics;
 
-import model.Cell;
-import model.Direction;
-import model.Game;
-import model.Ghost;
+import model.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,13 +39,14 @@ public class GraphicGame extends JFrame {
         this.setBounds(x,y,w,h);
 
         this.initComponents(game);
-        this.initBoard(game);
+        //this.initBoardBis(game);
+        //this.initBoard(game);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setVisible(true);
 
-        this.isRunning = false;
+        this.isRunning = true;
         this.game = game;
 
         this.setFocusable(true);
@@ -56,7 +54,8 @@ public class GraphicGame extends JFrame {
 
     /************* Initialisation part *********************/
     private void initComponents(Game g) {
-        this.initBoard(g);
+        //this.initBoard(g);
+        this.initBoardBis(g);
         this.add(this.pBoard, BorderLayout.CENTER);
 
         JPanel pSouth = this.initiPanelSouth(g);
@@ -158,33 +157,66 @@ public class GraphicGame extends JFrame {
             this.isRunning=false;
         }
 
-        try {
-            this.run();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     private void render() {
-        this.repaint();
-        this.revalidate();
+        this.updateBoardG();
+
     }
 
     private void updateGame() {
-        Cell pacmanPosition = this.game.getPacman().getCell();
+        game.setGhostsMoves();
+        game.checkPacman();
+        if(!game.getPacman().getCellStack().empty()) game.getPacman().move();
         for(Ghost g : this.game.getGhostList()) {
-            this.game.moveTo(g,pacmanPosition);
+            g.move();
         }
+
     }
 
     /************* Loop Game Part **************************/
     public void run() throws InterruptedException {
+        int i = 0;
+
+        long lastTime = System.nanoTime();
+        double delta = 0.0;
+        double ns = 1000000000.0/60.0; // 60FPS
+
+        long lastFpsTime = 0;
+        long fps = 0;
+
         while(this.isRunning) {
+            // Informations
+            System.out.println("Tour :" + i);
+            this.displayPacmanPosition();
+
+
+            long now = System.nanoTime();
+            long updateLength = now - lastTime;
+            lastTime = now;
+            delta = updateLength / ns;
+
+            // Update the frame counter
+            lastFpsTime += updateLength;
+            fps++;
+
+            //Update our FPS counter if a second has passed since
+            //we last update
+            if(lastFpsTime >= 1000000000) {
+                System.out.println("FPS: " + fps);
+                lastFpsTime = 0;
+                fps = 0;
+            }
+
             this.updateGame();
             this.render();
-            Thread.sleep(10000);
 
-            this.displayGhostPosition();
+            try {
+                Thread.sleep(1000);
+                //Thread.sleep((long) ((lastTime-System.nanoTime() + ns) / 1000000));
+            } catch(Exception e){}
+
+            i++;
         }
     }
 
@@ -233,15 +265,19 @@ public class GraphicGame extends JFrame {
             System.out.println(key);
             switch (key) {
                 case KeyEvent.VK_LEFT:
+                    //GraphicGame.this.game.setPacmanMoves(Direction.Left);
                     GraphicGame.this.game.movePacman(Direction.Left);
                     break;
                 case KeyEvent.VK_RIGHT:
+                    //GraphicGame.this.game.setPacmanMoves(Direction.Right);
                     GraphicGame.this.game.movePacman(Direction.Right);
                     break;
                 case KeyEvent.VK_UP:
+                    //GraphicGame.this.game.setPacmanMoves(Direction.Up);
                     GraphicGame.this.game.movePacman(Direction.Up);
                     break;
                 case KeyEvent.VK_DOWN:
+                    //GraphicGame.this.game.setPacmanMoves(Direction.Down);
                     GraphicGame.this.game.movePacman(Direction.Down);
                     break;
             }
@@ -257,7 +293,77 @@ public class GraphicGame extends JFrame {
     /************ methodes de merde *****************/
     private void displayGhostPosition() {
         for(Ghost g : this.game.getGhostList()) {
-            System.out.println(g.getCell());
+            System.out.println("Ghost: " + g.getCell());
+        }
+    }
+
+    private void displayPacmanPosition() {
+        Cell c = game.getPacman().getCell();
+        System.out.println("Pacman: " + c);
+        if(c.getStaticElement() == null) {
+            System.out.println("Void");
+        }
+        else {
+            System.out.println(c.getStaticElement());
+        }
+    }
+
+    private void initBoardBis(Game g) {
+        this.listCell = new ArrayList<>();
+        this.pBoard = new JPanel();
+        this.pBoard.setLayout(new GridLayout(g.getBoard().length, g.getBoard()[0].length));
+        this.pBoard.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+
+        for (Cell c : g.getCellList()) {
+            GraphicCell gc = new GraphicCell(c);
+            gc.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+            if (c.getIsWall() == true) {
+                gc.setBackground(Color.BLUE);
+            } else {
+                if (gc.getCell().getStaticElement() instanceof Gomme) {
+                    Gomme gum = (Gomme) gc.getCell().getStaticElement();
+                    if (gum.getIsSuper() == false) {
+                        gc.setBackground(Color.ORANGE);
+                    } else {
+                        gc.setBackground(Color.PINK);
+                    }
+                }
+                if (!gc.getCell().getMovableElementList().isEmpty()) {
+                    MovableElement me = gc.getCell().getMovableElementList().get(0);
+                    if (me instanceof Pacman) {
+                        gc.setBackground(Color.YELLOW);
+                    } else {
+                        gc.setBackground(Color.RED);
+                    }
+                }
+            }
+            pBoard.add(gc);
+            this.listCell.add(gc);
+        }
+    }
+
+    private void updateBoardG() {
+        for(GraphicCell gc : listCell) {
+            gc.removeAll();
+            if(gc.getCell().getIsWall()==true) gc.setBackground(Color.BLUE);
+            else {
+                if (gc.getCell().getStaticElement() == null && gc.getCell().getMovableElementList().isEmpty()) {
+                    gc.setBackground(Color.BLACK);
+                }
+                if(gc.getCell().getStaticElement() != null) {
+                    gc.setBackground(Color.ORANGE);
+                }
+                if (!gc.getCell().getMovableElementList().isEmpty()) {
+                    for (MovableElement me : gc.getCell().getMovableElementList())
+                        if (me instanceof Pacman) {
+                            gc.setBackground(Color.YELLOW);
+                        } else {
+                            gc.setBackground(Color.RED);
+                        }
+                }
+            }
+            gc.repaint();
+            gc.revalidate();
         }
     }
 }

@@ -102,7 +102,7 @@ public class TestModel {
         Game g = new Game(board);
         Pacman p = g.getPacman();
         p.displayPosition();
-
+/*
         g.movePacman(Direction.Down);
         p.displayPosition();
 
@@ -112,7 +112,7 @@ public class TestModel {
 
         g.movePacman(Direction.Right);
         p.displayPosition();
-
+*/
 
 
         Cell endCell = new Cell(6,5,false);

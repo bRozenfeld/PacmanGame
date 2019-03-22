@@ -215,8 +215,10 @@ public class Game {
         ArrayList<MovableElement> mel = this.pacman.getCell().getMovableElementList();
         if(!mel.isEmpty()) { // ghost in there
             for (MovableElement me : mel) {
-                Ghost g = (Ghost) me;
-                this.pacmanMeetGhost(g);
+                if(me instanceof Ghost) {
+                    Ghost g = (Ghost) me;
+                    this.pacmanMeetGhost(g);
+                }
             }
         }
     }
@@ -246,18 +248,34 @@ public class Game {
         }
     }
 
+    public void movePacman(Direction dir) {
+        Cell c = getNextCell(pacman.getCell(), dir);
+        c.addMovableElement(pacman);
+        pacman.getCell().removeMovableElement(pacman);
+        pacman.setCell(c);
+    }
+
+    /**
+     * Initialize a list of move for the ghost
+     */
+    public void setGhostsMoves() {
+        PathFinding pf = new PathFinding();
+        for(Ghost g : this.ghostList) {
+            g.setCellStack(pf.getWay(cellList, g.getCell(), pacman.getCell()));
+        }
+    }
+
     /**
      * Move Pacman into the given direction until he meets a wall
      * @param direction
      */
-    public void movePacman(Direction direction) {
+    public void setPacmanMoves(Direction direction) {
+        Stack<Cell> stack = new Stack<>();
         Cell tmp = this.getNextCell(this.pacman.getCell(), direction);
         while(tmp.getIsWall() != true) {
-            this.moveTo(this.pacman, tmp);
-            tmp = this.getNextCell(tmp, direction);
+            stack.push(tmp);
         }
-        System.out.println("Pacman position : " + this.pacman.getCell());
-
+        pacman.setCellStack(stack);
     }
 
     private Cell getNextCell(Cell c, Direction dir) {
@@ -493,5 +511,22 @@ public class Game {
              }
          }
      }
+
+
+    /**
+     * Display the position of all the Element in the game
+     */
+    public void displayElements() {
+        for(Ghost g : ghostList) {
+            System.out.println("Ghost: " + g.getCell());
+        }
+
+        System.out.println("Pacman: " + pacman.getCell());
+
+        for(Cell c : cellList) {
+            if(c.getStaticElement() != null)
+                System.out.println("Gum : " + c);
+        }
+    }
 
 }
