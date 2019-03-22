@@ -51,10 +51,12 @@ public abstract class MovableElement {
 
     public void move() {
         Cell futureCell = null;
-        if (!cellStack.empty()) futureCell = cellStack.pop();
-        cell.removeMovableElement(this);
-        futureCell.addMovableElement(this);
-        this.cell = futureCell;
+        if (!cellStack.empty()) {
+            futureCell = cellStack.pop();
+            cell.removeMovableElement(this);
+            futureCell.addMovableElement(this);
+            this.cell = futureCell;
+        }
     }
 
     /**
@@ -63,5 +65,6 @@ public abstract class MovableElement {
     public void displayPosition() {
         System.out.println("(" + this.cell.getX() + "," + this.cell.getY() + ")");
     }
+
 
 }

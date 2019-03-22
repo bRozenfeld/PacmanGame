@@ -173,7 +173,7 @@ public class GraphicGame extends JFrame {
     private void updateGame() {
         game.setGhostsMoves();
         game.checkPacman();
-        if(!game.getPacman().getCellStack().empty()) game.getPacman().move();
+        game.getPacman().move();
         for(Ghost g : this.game.getGhostList()) {
             g.move();
         }
@@ -196,7 +196,6 @@ public class GraphicGame extends JFrame {
             System.out.println("Tour :" + i);
             this.displayPacmanPosition();
 
-
             long now = System.nanoTime();
             long updateLength = now - lastTime;
             lastTime = now;
@@ -208,11 +207,13 @@ public class GraphicGame extends JFrame {
 
             //Update our FPS counter if a second has passed since
             //we last update
+            /*
             if(lastFpsTime >= 1000000000) {
                 System.out.println("FPS: " + fps);
                 lastFpsTime = 0;
                 fps = 0;
             }
+            */
 
             this.updateGame();
             this.render();
@@ -271,20 +272,20 @@ public class GraphicGame extends JFrame {
             System.out.println(key);
             switch (key) {
                 case KeyEvent.VK_LEFT:
-                    //GraphicGame.this.game.setPacmanMoves(Direction.Left);
-                    GraphicGame.this.game.movePacman(Direction.Left);
+                    GraphicGame.this.game.setPacmanMoves(Direction.Left);
+                    //GraphicGame.this.game.movePacman(Direction.Left);
                     break;
                 case KeyEvent.VK_RIGHT:
-                    //GraphicGame.this.game.setPacmanMoves(Direction.Right);
-                    GraphicGame.this.game.movePacman(Direction.Right);
+                    GraphicGame.this.game.setPacmanMoves(Direction.Right);
+                    //GraphicGame.this.game.movePacman(Direction.Right);
                     break;
                 case KeyEvent.VK_UP:
-                    //GraphicGame.this.game.setPacmanMoves(Direction.Up);
-                    GraphicGame.this.game.movePacman(Direction.Up);
+                    GraphicGame.this.game.setPacmanMoves(Direction.Up);
+                    //GraphicGame.this.game.movePacman(Direction.Up);
                     break;
                 case KeyEvent.VK_DOWN:
-                    //GraphicGame.this.game.setPacmanMoves(Direction.Down);
-                    GraphicGame.this.game.movePacman(Direction.Down);
+                    GraphicGame.this.game.setPacmanMoves(Direction.Down);
+                    //GraphicGame.this.game.movePacman(Direction.Down);
                     break;
             }
         }

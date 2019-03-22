@@ -13,6 +13,7 @@ import java.util.Stack;
  * @inv {@code level>0}
  **/
 public class Game {
+
     /**
      * int representing the best score
      */
@@ -273,9 +274,9 @@ public class Game {
      */
     public void setPacmanMoves(Direction direction) {
         Stack<Cell> stack = new Stack<>();
-        Cell tmp = this.getNextCell(this.pacman.getCell(), direction);
-        while(tmp.getIsWall() != true) {
-            stack.push(tmp);
+        Cell c = getNextCell(pacman.getCell(), direction);
+        if (c.getIsWall()==false && c != null) {
+            stack.push(c);
         }
         pacman.setCellStack(stack);
     }
