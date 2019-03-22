@@ -118,9 +118,9 @@ public class GraphicGame extends JFrame {
         this.pInfo.setLayout(new BoxLayout(pInfo,BoxLayout.X_AXIS));
         this.lLevel=new JLabel("Level: " + g.getLevel());
         this.pInfo.add(lLevel);
-        this.lLives=new JLabel("               Lives: " + g.getLives());
+        this.lLives=new JLabel("Lives: " + g.getLives());
         this.pInfo.add(lLives);
-        this.lScore=new JLabel("               Score: " + g.getScore());
+        this.lScore=new JLabel("Score: " + g.getScore());
         this.pInfo.add(lScore);
     }
 
@@ -159,9 +159,15 @@ public class GraphicGame extends JFrame {
 
     }
 
+    private void updateInfo() {
+        lLevel.setText("Level: " + game.getLevel());
+        lLives.setText("Lives: "+ game.getLives());
+        lScore.setText("Score: " + game.getScore());
+    }
+
     private void render() {
         this.updateBoardG();
-
+        this.updateInfo();
     }
 
     private void updateGame() {
@@ -212,7 +218,7 @@ public class GraphicGame extends JFrame {
             this.render();
 
             try {
-                //Thread.sleep(3000);
+                Thread.sleep(1000);
                 Thread.sleep((long) ((lastTime-System.nanoTime() + ns) / 1000000));
             } catch(Exception e){}
 
