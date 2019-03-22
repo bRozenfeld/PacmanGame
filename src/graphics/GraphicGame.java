@@ -212,8 +212,8 @@ public class GraphicGame extends JFrame {
             this.render();
 
             try {
-                Thread.sleep(1000);
-                //Thread.sleep((long) ((lastTime-System.nanoTime() + ns) / 1000000));
+                //Thread.sleep(3000);
+                Thread.sleep((long) ((lastTime-System.nanoTime() + ns) / 1000000));
             } catch(Exception e){}
 
             i++;

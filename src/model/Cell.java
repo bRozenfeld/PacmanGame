@@ -87,7 +87,7 @@ public class Cell {
      * @param se : MovableElement to remove
      */
     public void addStaticElement(StaticElement se){
-
+        this.staticElement = se;
     }
 
     /**
@@ -95,7 +95,7 @@ public class Cell {
      * @param se : MovableElement to remove
      */
     public void removeStaticElement (StaticElement se){
-
+        this.staticElement = null;
     }
 
     @Override

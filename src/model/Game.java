@@ -440,7 +440,7 @@ public class Game {
     }
 
     /**
-     * Increase the actual score when pacman eat a gomme by the value of the static element
+     * Increase the actual score when pacman eat a gum by the value of the static element
      * Remove the eaten element from the game
      * If this is a super gomme, then make ghost vulnerable
      * @param se : the element being eaten
