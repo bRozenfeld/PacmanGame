@@ -9,28 +9,28 @@ public class Ghost extends MovableElement {
 
     private boolean isVulnerable;
     private boolean isRegenerating;
-    private GhostColor color;
+    private GhostName name;
 
     public Ghost(Cell cell, Cell beginCell) {
         super(cell, beginCell);
         this.isRegenerating = false;
         this.isVulnerable = false;
-        this.color = null;
+        this.name = null;
     }
 
-    public Ghost(Cell cell, GhostColor color, Cell beginCell) {
+    public Ghost(Cell cell, GhostName name, Cell beginCell) {
         super(cell, beginCell);
-        this.color = color;
+        this.name = name;
         this.isVulnerable = false;
         this.isRegenerating = false;
     }
 
-    public GhostColor getColor() {
-        return color;
+    public GhostName getName() {
+        return name;
     }
 
-    public void setColor(GhostColor color) {
-        this.color = color;
+    public void setName(GhostName name) {
+        this.name = name;
     }
 
     public boolean getIsRegenerating() {
@@ -56,11 +56,11 @@ public class Ghost extends MovableElement {
         if (o == null || getClass() != o.getClass()) return false;
         Ghost ghost = (Ghost) o;
         return isVulnerable == ghost.isVulnerable &&
-                color == ghost.color;
+                name == ghost.name;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(isVulnerable, color);
+        return Objects.hash(isVulnerable, name);
     }
 }
