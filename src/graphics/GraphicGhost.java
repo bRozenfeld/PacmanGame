@@ -32,17 +32,17 @@ public class GraphicGhost extends JPanel {
         int w = this.getParent().getSize().width -1;
         int h = this.getParent().getSize().height -1;
 
-        switch(this.ghost.getColor()) {
-            case Blue:
-                g2d.setColor(Color.BLUE);
+        switch(this.ghost.getName()) {
+            case Inky:
+                g2d.setColor(Color.CYAN);
                 break;
-            case Orange:
+            case Clyde:
                 g2d.setColor(Color.ORANGE);
                 break;
-            case Red:
+            case Blinky:
                 g2d.setColor(Color.RED);
                 break;
-            case Pink:
+            case Pinky:
                 g2d.setColor(Color.PINK);
                 break;
         }

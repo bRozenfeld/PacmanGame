@@ -196,12 +196,15 @@ public class GraphicGame extends JFrame {
         }
     }
 
-    private void updateGame() {
+    private void updateGame(int i) {
         game.checkPacman();
+        if(i>1) {
+            System.out.println(game.getPacman().getCellStack());
+        }
 
         if(game.getPacman().isEaten() == false) {
             game.getPacman().move();
-            game.setGhostsMoves();
+            game.setGhostsMoves(); //refresh the stack only each 5 sleep
             for (Ghost g : this.game.getGhostList()) {
                 g.move();
             }
@@ -210,52 +213,23 @@ public class GraphicGame extends JFrame {
             game.rebuildLevel();
             game.getPacman().setIsEaten(false);
         }
-
     }
 
     /************* Loop Game Part **************************/
     public void run() throws InterruptedException {
         int i = 0;
 
-        long lastTime = System.nanoTime();
-        double delta = 0.0;
-        double ns = 1000000000.0/60.0; // 60FPS
-
-        long lastFpsTime = 0;
-        long fps = 0;
-
         while(this.isRunning && !game.isOver()) {
             // Informations
             System.out.println("Tour :" + i);
             this.displayPacmanPosition();
 
-            long now = System.nanoTime();
-            long updateLength = now - lastTime;
-            lastTime = now;
-            delta = updateLength / ns;
-
-            // Update the frame counter
-            lastFpsTime += updateLength;
-            fps++;
-
-            //Update our FPS counter if a second has passed since
-            //we last update
-            /*
-            if(lastFpsTime >= 1000000000) {
-                System.out.println("FPS: " + fps);
-                lastFpsTime = 0;
-                fps = 0;
-            }
-            */
-
-            this.updateGame();
+            this.updateGame(i);
             this.render();
 
             try {
                 Thread.sleep(1000);
-                Thread.sleep((long) ((lastTime-System.nanoTime() + ns) / 1000000));
             } catch(Exception e){}
-
             i++;
         }
     }
@@ -302,23 +276,22 @@ public class GraphicGame extends JFrame {
         @Override
         public void keyPressed(KeyEvent e) {
             int key = e.getKeyCode();
-            System.out.println(key);
             switch (key) {
                 case KeyEvent.VK_LEFT:
-                    GraphicGame.this.game.setPacmanMoves(Direction.Left);
-                    //GraphicGame.this.game.movePacman(Direction.Left);
+                    GraphicGame.this.game.getPacman().setDirection(Direction.Left);
+                    GraphicGame.this.game.setPacmanMoves();
                     break;
                 case KeyEvent.VK_RIGHT:
-                    GraphicGame.this.game.setPacmanMoves(Direction.Right);
-                    //GraphicGame.this.game.movePacman(Direction.Right);
+                    GraphicGame.this.game.getPacman().setDirection(Direction.Right);
+                    GraphicGame.this.game.setPacmanMoves();
                     break;
                 case KeyEvent.VK_UP:
-                    GraphicGame.this.game.setPacmanMoves(Direction.Up);
-                    //GraphicGame.this.game.movePacman(Direction.Up);
+                    GraphicGame.this.game.getPacman().setDirection(Direction.Up);
+                    GraphicGame.this.game.setPacmanMoves();
                     break;
                 case KeyEvent.VK_DOWN:
-                    GraphicGame.this.game.setPacmanMoves(Direction.Down);
-                    //GraphicGame.this.game.movePacman(Direction.Down);
+                    GraphicGame.this.game.getPacman().setDirection(Direction.Down);
+                    GraphicGame.this.game.setPacmanMoves();
                     break;
             }
         }

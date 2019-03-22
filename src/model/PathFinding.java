@@ -59,10 +59,11 @@ public class PathFinding {
         Stack<Cell> res = new Stack<>();
         res.push(c);
         Cell tmp = c.getPreviousCell();
-        while(tmp != null && !tmp.equals(beginCell)){
+        while (tmp != null && !tmp.equals(beginCell)) {
             res.push(tmp);
             tmp = tmp.getPreviousCell();
         }
+
         return res;
     }
 

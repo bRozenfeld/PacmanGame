@@ -2,7 +2,9 @@ package model;
 
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Stack;
 
 /**
@@ -271,26 +273,125 @@ public class Game {
     }
 
     /**
-     * Initialize a list of move for the ghost
+     * Initialize a list of move for each ghost
      */
     public void setGhostsMoves() {
         PathFinding pf = new PathFinding();
         for(Ghost g : this.ghostList) {
+            switch(g.getName()) {
+                case Blinky:
+                    setBlinkyMoves(g);
+                    break;
+                case Inky:
+                    setInkyMoves(g);
+                    break;
+                case Clyde:
+                    setClydeMoves(g);
+                    break;
+                case Pinky:
+                    setPinkyMoves(g);
+                    break;
+            }
             g.setCellStack(pf.getWay(cellList, g.getCell(), pacman.getCell()));
         }
     }
 
     /**
-     * Move Pacman into the given direction until he meets a wall
-     * @param direction
+     * Define list of movement to pinky
+     * He aims for a position in front of pacman mouth
      */
-    public void setPacmanMoves(Direction direction) {
+    private void setPinkyMoves(Ghost g) {
+        PathFinding pf = new PathFinding();
+
+        Cell c = getNextCell(pacman.getCell(), pacman.getDirection());
+        boolean find = false;
+        while (!find) {
+            if (c == null || c.getIsWall() == true) {
+                find = true;
+                break;
+            }
+        }
+        g.setCellStack(pf.getWay(cellList, g.getCell(), c));
+    }
+
+    /**
+     * Define stack of cell where the ghost has to go
+     * Clyde behavior is totally random on the map
+     * @param g : Ghost g representing clyde
+     */
+    private void setClydeMoves(Ghost g) {
+        PathFinding pf = new PathFinding();
+        Random r = new Random();
+        boolean find = false;
+        while(!find) {
+            int rand = r.nextInt(cellList.size());
+            Cell c = cellList.get(rand);
+            if(!c.getIsWall()) {
+                g.setCellStack(pf.getWay(cellList, g.getCell(), c));
+                find = true;
+            }
+        }
+    }
+
+    /**
+     * Define the stack of cell where Inky has to move
+     * Sometimes he runs toward pacman, other times he run away
+     * @param g : Ghost Inky
+     */
+    public void setInkyMoves(Ghost g) {
+        PathFinding pf = new PathFinding();
+        Random r = new Random();
+        int rand = r.nextInt(2); // random int between 0 and 1
+        if(rand == 0) { // run toward pacman
+            g.setCellStack(pf.getWay(cellList, g.getCell(), pacman.getCell()));
+        }
+        else { // run away from pacman
+            boolean find = false;
+            for(Cell c : cellList) {
+                if(c.getIsWall() != false) {
+                    int dx = Math.abs(c.getX() - pacman.getCell().getX());
+                    int dy = Math.abs(c.getY() - pacman.getCell().getY());
+                    if(dx >= 5 && dy >= 5) {
+                        g.setCellStack(pf.getWay(cellList, g.getCell(), c));
+                        find = true;
+                        break;
+                    }
+                }
+            }
+            while(!find) { // in case no cell is found, pick a random one
+                rand = r.nextInt(cellList.size());
+                Cell cell = cellList.get(rand);
+                if(!cell.getIsWall()) {
+                    g.setCellStack(pf.getWay(cellList, g.getCell(), cell));
+                    find = true;
+                }
+            }
+        }
+    }
+
+    /**
+     * Define the stack list where blinky has to move
+     * Blinky is just following pacman all time
+     */
+    public void setBlinkyMoves(Ghost g) {
+        PathFinding pf = new PathFinding();
+        g.setCellStack(pf.getWay(cellList, g.getCell(), pacman.getCell()));
+    }
+
+    /**
+     * Move Pacman into the pacman direction until he meets a wall
+     */
+    public void setPacmanMoves() {
         Stack<Cell> stack = new Stack<>();
-        Cell c = getNextCell(pacman.getCell(), direction);
-        if (c.getIsWall()==false && c != null) {
+        Cell c = getNextCell(pacman.getCell(), pacman.getDirection());
+
+        while (c != null && c.getIsWall() == false) {
+            System.out.println(c);
             stack.push(c);
+            c = getNextCell(c, pacman.getDirection());
         }
         pacman.setCellStack(stack);
+
     }
 
     private Cell getNextCell(Cell c, Direction dir) {
@@ -371,12 +472,14 @@ public class Game {
             g.getCell().removeMovableElement(g);
             g.getBeginCell().addMovableElement(g);
             g.setCell(g.getBeginCell());
+            g.setCellStack(new Stack<>());
         }
 
         // restore pacman to its initial position
         this.pacman.getCell().removeMovableElement(this.pacman);
         this.pacman.getBeginCell().addMovableElement(this.pacman);
         this.pacman.setCell(this.pacman.getBeginCell());
+        this.pacman.setCellStack(new Stack<>());
 
     }
 
@@ -386,8 +489,11 @@ public class Game {
      * 1 : gomme
      * 2 : super gomme
      * 3 : pacman
-     * 4 : ghost
+     * 4 : blinky
      * 5 : bonus
+     * 6 : pinky
+     * 7 : inky
+     * 8 : clyde
      */
     private void initGame(int [][] board) {
         for(int i = 0; i < board.length; i++) {
@@ -416,7 +522,7 @@ public class Game {
                 }
                 else if(board[i][j] == 4) {
                     Cell c = new Cell(j,i,false);
-                    Ghost g = new Ghost(c,GhostColor.Orange,c);
+                    Ghost g = new Ghost(c,GhostName.Blinky, c);
                     c.addMovableElement(g);
                     this.cellList.add(c);
                     this.ghostList.add(g);
@@ -425,6 +531,27 @@ public class Game {
                     Cell c = new Cell(i,j,false);
                     Bonus bonus = new Bonus(100, TypeBonus.Cherry, c);
                     this.cellList.add(c);
+                }
+                else if(board[i][j] == 6) {
+                    Cell c = new Cell(j,i,false);
+                    Ghost g = new Ghost(c,GhostName.Pinky, c);
+                    c.addMovableElement(g);
+                    this.cellList.add(c);
+                    this.ghostList.add(g);
+                }
+                else if(board[i][j] == 7) {
+                    Cell c = new Cell(j,i,false);
+                    Ghost g = new Ghost(c,GhostName.Inky, c);
+                    c.addMovableElement(g);
+                    this.cellList.add(c);
+                    this.ghostList.add(g);
+                }
+                else if(board[i][j] == 8) {
+                    Cell c = new Cell(j,i,false);
+                    Ghost g = new Ghost(c,GhostName.Clyde, c);
+                    c.addMovableElement(g);
+                    this.cellList.add(c);
+                    this.ghostList.add(g);
                 }
             }
         }

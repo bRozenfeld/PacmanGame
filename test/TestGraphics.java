@@ -18,7 +18,7 @@ public class TestGraphics {
         GraphicPacman gp = new GraphicPacman();
         Cell c = new Cell(1,1,false);
         Cell bc = new Cell(2,1,false);
-        Ghost g = new Ghost(c, GhostColor.Blue, bc);
+        Ghost g = new Ghost(c, bc);
         Gomme gomme=new Gomme(50,false);
         Gomme supgomme=new Gomme(100,true);
         GraphicGhost gg = new GraphicGhost(g);

@@ -57,7 +57,7 @@ public class TestModel {
                 }
                 else if(board[i][j] == 3) {
                     Cell c = new Cell(i,j,false);
-                    Ghost g = new Ghost(c, GhostColor.Blue,c);
+                    Ghost g = new Ghost(c,c);
                     c.addMovableElement(g);
                     cellList.add(c);
                     ghostList.add(g);
