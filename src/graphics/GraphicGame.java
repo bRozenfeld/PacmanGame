@@ -25,6 +25,7 @@ public class GraphicGame extends JFrame {
     private JPanel pStartStop;
     private JPanel pBestScore;
     private JPanel  pProducers;
+    private JPanel pOver; // panel showing when the player lose
 
     private JButton bSTART;
 
@@ -124,6 +125,7 @@ public class GraphicGame extends JFrame {
         this.pInfo.add(lScore);
     }
 
+
     private void initPanelProducers(){
         this.pProducers=new JPanel();
         this.pProducers.setLayout(new BoxLayout(pProducers,BoxLayout.X_AXIS));
@@ -143,6 +145,27 @@ public class GraphicGame extends JFrame {
         this.initPanelProducers();
         pSouth.add(this.pProducers);
         return pSouth;
+    }
+
+    private void initPanelOver() {
+
+        this.remove(pBoard);
+        this.remove(pInfo);
+        this.remove(pStartStop);
+
+        pOver = new JPanel();
+        pOver.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+        JLabel jlose = new JLabel("You lose !");
+        pOver.add(jlose);
+
+        JLabel lScore = new JLabel("Score : " + game.getScore());
+        pOver.add(lScore);
+
+
+        this.add(pOver);
+        this.repaint();
+        this.revalidate();
     }
 
     /************ Update Part *******************************/
@@ -166,16 +189,26 @@ public class GraphicGame extends JFrame {
     }
 
     private void render() {
-        this.updateBoardG();
-        this.updateInfo();
+        if(game.isOver()) initPanelOver();
+        else {
+            this.updateBoardG();
+            this.updateInfo();
+        }
     }
 
     private void updateGame() {
-        game.setGhostsMoves();
         game.checkPacman();
-        game.getPacman().move();
-        for(Ghost g : this.game.getGhostList()) {
-            g.move();
+
+        if(game.getPacman().isEaten() == false) {
+            game.getPacman().move();
+            game.setGhostsMoves();
+            for (Ghost g : this.game.getGhostList()) {
+                g.move();
+            }
+        }
+        else { //Il faudrait rajouter du temps avant de repasser à true
+            game.rebuildLevel();
+            game.getPacman().setIsEaten(false);
         }
 
     }
@@ -191,7 +224,7 @@ public class GraphicGame extends JFrame {
         long lastFpsTime = 0;
         long fps = 0;
 
-        while(this.isRunning) {
+        while(this.isRunning && !game.isOver()) {
             // Informations
             System.out.println("Tour :" + i);
             this.displayPacmanPosition();
@@ -306,7 +339,7 @@ public class GraphicGame extends JFrame {
 
     private void displayPacmanPosition() {
         Cell c = game.getPacman().getCell();
-        System.out.println("Pacman: " + c);
+        System.out.println("Pacman: " + c + game.getPacman());
         if(c.getStaticElement() == null) {
             System.out.println("Void");
         }
@@ -331,7 +364,7 @@ public class GraphicGame extends JFrame {
                     Gomme gum = (Gomme) gc.getCell().getStaticElement();
                     if (gum.getIsSuper() == false) {
                         gc.setBackground(Color.ORANGE);
-                    } else {
+                    } else if (gum.getIsSuper() == true){
                         gc.setBackground(Color.PINK);
                     }
                 }
@@ -358,7 +391,14 @@ public class GraphicGame extends JFrame {
                     gc.setBackground(Color.BLACK);
                 }
                 if(gc.getCell().getStaticElement() != null) {
-                    gc.setBackground(Color.ORANGE);
+                    if (gc.getCell().getStaticElement() instanceof Gomme) {
+                        Gomme gum = (Gomme) gc.getCell().getStaticElement();
+                        if (gum.getIsSuper() == false) {
+                            gc.setBackground(Color.ORANGE);
+                        } else if (gum.getIsSuper() == true) {
+                            gc.setBackground(Color.PINK);
+                        }
+                    }
                 }
                 if (!gc.getCell().getMovableElementList().isEmpty()) {
                     for (MovableElement me : gc.getCell().getMovableElementList())

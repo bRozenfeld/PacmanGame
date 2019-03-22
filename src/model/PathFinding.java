@@ -11,7 +11,7 @@ public class PathFinding {
         CellComparator cp = new CellComparator();
 
         PriorityQueue<Cell> openList = new PriorityQueue<>(1,cp);
-        ArrayList<Cell> closedList = new ArrayList<Cell>();
+        ArrayList<Cell> closedList = new ArrayList<>();
 
         beginCell.setCost(0);
         openList.add(beginCell);
@@ -59,8 +59,7 @@ public class PathFinding {
         Stack<Cell> res = new Stack<>();
         res.push(c);
         Cell tmp = c.getPreviousCell();
-        res.push(tmp);
-        while(!tmp.equals(beginCell)){
+        while(tmp != null && !tmp.equals(beginCell)){
             res.push(tmp);
             tmp = tmp.getPreviousCell();
         }

@@ -64,6 +64,8 @@ public class Game {
      */
     private int ghostEaten;
 
+    private boolean isOver;
+
     /**
      * 2D array representing the board
      * 0 : wall
@@ -104,6 +106,7 @@ public class Game {
         this.ghostEaten = 0;
         this.bestScore = this.readBestScore();
         this.board = board;
+        this.isOver = false;
     }
 
     /**
@@ -158,6 +161,14 @@ public class Game {
 
     public int getScore() {
         return score;
+    }
+
+    public boolean isOver() {
+        return isOver;
+    }
+
+    public void setOver(boolean over) {
+        isOver = over;
     }
 
     public Pacman getPacman() {
@@ -219,6 +230,7 @@ public class Game {
                 if(me instanceof Ghost) {
                     Ghost g = (Ghost) me;
                     this.pacmanMeetGhost(g);
+                    break;
                 }
             }
         }
@@ -317,12 +329,13 @@ public class Game {
      * Then call a method the write the best score in a file
      * @return int : the maximum between score and bestscore
      */
-    public int gameOver(){
+    public void gameOver(){
         if(this.score > this.bestScore) {
             this.bestScore = this.score;
         }
         this.writeBestScore();
-        return this.bestScore;
+
+        this.isOver = true;
     }
 
     /**
@@ -348,6 +361,25 @@ public class Game {
 
         this.level++;
     }
+
+    /**
+     * Rebuild the game when pacman is eaten by a ghost
+     */
+    public void rebuildLevel() {
+        // send each ghost to its initial position
+        for(Ghost g : this.ghostList) {
+            g.getCell().removeMovableElement(g);
+            g.getBeginCell().addMovableElement(g);
+            g.setCell(g.getBeginCell());
+        }
+
+        // restore pacman to its initial position
+        this.pacman.getCell().removeMovableElement(this.pacman);
+        this.pacman.getBeginCell().addMovableElement(this.pacman);
+        this.pacman.setCell(this.pacman.getBeginCell());
+
+    }
+
 
     /**
      * 0 : wall
@@ -437,8 +469,10 @@ public class Game {
         // pacman is eaten by the ghost
         else {
             this.lives--;
-            if(this.lives == 0)
+            pacman.setIsEaten(true);
+            if(this.lives == 0) {
                 this.gameOver();
+            }
         }
     }
 
