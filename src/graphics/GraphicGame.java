@@ -198,13 +198,10 @@ public class GraphicGame extends JFrame {
 
     private void updateGame(int i) {
         game.checkPacman();
-        if(i>1) {
-            System.out.println(game.getPacman().getCellStack());
-        }
 
         if(game.getPacman().isEaten() == false) {
             game.getPacman().move();
-            game.setGhostsMoves(); //refresh the stack only each 5 sleep
+            if(i % 5 == 0 || i ==0) game.setGhostsMoves(); //refresh the stack only each 5 sleep
             for (Ghost g : this.game.getGhostList()) {
                 g.move();
             }
@@ -222,13 +219,13 @@ public class GraphicGame extends JFrame {
         while(this.isRunning && !game.isOver()) {
             // Informations
             System.out.println("Tour :" + i);
-            this.displayPacmanPosition();
+            //this.displayPacmanPosition();
 
             this.updateGame(i);
             this.render();
 
             try {
-                Thread.sleep(1000);
+                Thread.sleep(10000);
             } catch(Exception e){}
             i++;
         }

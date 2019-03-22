@@ -304,14 +304,12 @@ public class Game {
         PathFinding pf = new PathFinding();
 
         Cell c = getNextCell(pacman.getCell(), pacman.getDirection());
-        boolean find = false;
-        while (!find) {
-            if (c == null || c.getIsWall() == true) {
-                find = true;
-                break;
-            }
+        Cell tmp = c;
+        while (c != null && c.getIsWall() == false) {
+            tmp = c;
+            c = getNextCell(c, pacman.getDirection());
         }
-        g.setCellStack(pf.getWay(cellList, g.getCell(), c));
+        g.setCellStack(pf.getWay(cellList, g.getCell(), tmp));
     }
 
     /**
@@ -382,15 +380,16 @@ public class Game {
      * Move Pacman into the pacman direction until he meets a wall
      */
     public void setPacmanMoves() {
-        Stack<Cell> stack = new Stack<>();
+        PathFinding pf = new PathFinding();
         Cell c = getNextCell(pacman.getCell(), pacman.getDirection());
-
-        while (c != null && c.getIsWall() == false) {
-            System.out.println(c);
-            stack.push(c);
+        c.setPreviousCell(pacman.getCell());
+        while (c.getIsWall() == false) {
+            Cell tmp =c;
             c = getNextCell(c, pacman.getDirection());
+            if(c != null ) c.setPreviousCell(tmp);
+            else break;
         }
-        pacman.setCellStack(stack);
+        pacman.setCellStack(pf.buildWay(c, pacman.getCell()));
 
     }
 

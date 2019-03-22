@@ -55,7 +55,7 @@ public class PathFinding {
      * @param c
      * @return
      */
-    private Stack<Cell> buildWay(Cell c, Cell beginCell) {
+    public Stack<Cell> buildWay(Cell c, Cell beginCell) {
         Stack<Cell> res = new Stack<>();
         res.push(c);
         Cell tmp = c.getPreviousCell();

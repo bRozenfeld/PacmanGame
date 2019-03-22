@@ -50,6 +50,7 @@ public abstract class MovableElement {
 
 
     public void move() {
+        System.out.println("One move");
         Cell futureCell = null;
         if (!cellStack.empty()) {
             futureCell = cellStack.pop();
