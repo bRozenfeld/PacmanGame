@@ -86,9 +86,7 @@ public class Cell {
      * Add a static element to the cell
      * @param se : MovableElement to remove
      */
-    public void addStaticElement(StaticElement se){
-        this.staticElement = se;
-    }
+    public void addStaticElement(StaticElement se){ this.staticElement = se; }
 
     /**
      * Remove a static element to the cell
@@ -120,7 +118,7 @@ public class Cell {
         return s;
     }
 
-    // Partie pour le pathfinding
+    // Part for the pathfinding
 
     public Cell getPreviousCell() {
         return previousCell;

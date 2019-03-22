@@ -436,6 +436,7 @@ public class Game {
         // pacman is eaten by the ghost
         else {
             this.lives--;
+            //System.out.println(getLives());
             if(this.lives == 0)
                 this.gameOver();
         }
