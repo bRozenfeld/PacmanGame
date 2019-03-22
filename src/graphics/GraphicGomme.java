@@ -12,17 +12,28 @@ public class GraphicGomme extends Component {
     private Gomme gomme;
 
     public GraphicGomme(Gomme gomme) {
+        super();
         this.gomme = gomme;
+        this.setBackground(Color.BLACK);
     }
 
     public void paint(Graphics g){
+        this.setSize(this.getParent().getSize());
         Graphics2D g2d = (Graphics2D)g;
         int x = 0;
         int y = 0;
-        int w = getSize().width -1;
-        int h = getSize().height -1;
-        g2d.setColor(Color.yellow);
-        g2d.fillOval(x,y,w,h);
+        int w = getSize().width/2 ;
+        int h = getSize().width/2 ;
+        g2d.setBackground(Color.BLACK);
+        g2d.setColor(Color.YELLOW);
+        if(this.gomme.getIsSuper()==true){
+            g2d.fillOval(x,y,w,h);
+        }
+        else {
+            g2d.fillOval(x,y,w*2/3,h*2/3);
+        }
 
     }
+
+
 }
