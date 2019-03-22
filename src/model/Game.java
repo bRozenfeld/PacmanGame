@@ -250,9 +250,11 @@ public class Game {
 
     public void movePacman(Direction dir) {
         Cell c = getNextCell(pacman.getCell(), dir);
-        c.addMovableElement(pacman);
-        pacman.getCell().removeMovableElement(pacman);
-        pacman.setCell(c);
+        if (c.getIsWall()==false) {
+            c.addMovableElement(pacman);
+            pacman.getCell().removeMovableElement(pacman);
+            pacman.setCell(c);
+        }
     }
 
     /**
