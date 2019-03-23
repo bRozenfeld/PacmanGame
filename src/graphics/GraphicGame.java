@@ -333,17 +333,32 @@ public class GraphicGame extends JFrame {
                 if (gc.getCell().getStaticElement() instanceof Gomme) {
                     Gomme gum = (Gomme) gc.getCell().getStaticElement();
                     if (gum.getIsSuper() == false) {
-                        gc.setBackground(Color.ORANGE);
+                        gc.setBackground(Color.GREEN);
                     } else if (gum.getIsSuper() == true){
-                        gc.setBackground(Color.PINK);
+                        gc.setBackground(Color.GRAY);
                     }
                 }
                 if (!gc.getCell().getMovableElementList().isEmpty()) {
                     MovableElement me = gc.getCell().getMovableElementList().get(0);
                     if (me instanceof Pacman) {
                         gc.setBackground(Color.YELLOW);
-                    } else {
-                        gc.setBackground(Color.RED);
+                    } else if(me instanceof  Ghost){
+                        Ghost ghost = (Ghost) me;
+                        switch(ghost.getName()) {
+                            case Pinky:
+                                gc.setBackground(Color.PINK);
+                                break;
+                            case Inky:
+                                gc.setBackground(Color.CYAN);
+                                break;
+                            case Clyde:
+                                gc.setBackground(Color.ORANGE);
+                                break;
+                            case Blinky:
+                                gc.setBackground(Color.RED);
+                                break;
+                        }
+
                     }
                 }
             }

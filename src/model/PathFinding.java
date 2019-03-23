@@ -100,6 +100,9 @@ public class PathFinding {
      * @return
      */
     private int getDistance(Cell c1, Cell c2) {
+        System.out.println("Enter getDistance");
+        System.out.println("C1: ");
+        System.out.println("C2: ");
         int dx = Math.abs(c1.getX() - c2.getX());
         int dy = Math.abs(c1.getY() - c2.getY());
         return dx + dy;

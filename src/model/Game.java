@@ -69,6 +69,8 @@ public class Game {
 
     private boolean isOver;
 
+
+
     /**
      * 2D array representing the board
      * 0 : wall
@@ -80,24 +82,7 @@ public class Game {
      *
      * P e à supprimer
      */
-    private int[][] board = {
-            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-            {0,4,1,1,1,1,0,0,0,1,1,1,1,4,0},
-            {0,1,0,1,0,1,1,0,1,1,0,1,0,1,0},
-            {0,1,0,2,0,0,1,0,1,0,0,2,0,1,0},
-            {0,1,0,1,1,0,1,0,1,0,1,1,0,1,0},
-            {0,1,0,0,1,1,1,1,1,1,1,0,0,1,0},
-            {0,1,1,1,1,0,0,1,0,0,1,1,1,1,0},
-            {0,1,0,0,1,0,1,1,1,0,1,0,0,1,0},
-            {0,1,0,1,1,0,0,0,0,0,1,1,0,1,0},
-            {0,1,1,1,0,0,0,5,0,0,0,1,1,1,0},
-            {0,1,0,1,0,1,1,1,1,1,0,1,0,1,0},
-            {0,1,0,2,1,1,0,1,0,1,1,2,0,1,0},
-            {0,1,0,0,1,0,0,1,0,0,1,0,0,1,0},
-            {0,4,1,1,1,1,1,3,1,1,1,1,1,4,0},
-            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
-
-    };
+    private int[][] board;
 
     public Game(int[][] board) {
         this.cellList = new ArrayList<>();
@@ -112,44 +97,6 @@ public class Game {
         this.isOver = false;
     }
 
-    /**
-     * Initialize a new Game without passing a board
-     * @param pacman : the pacman in the game
-     */
-    public Game(Pacman pacman,  ArrayList<Cell> cellList, int numberGommes, ArrayList<Ghost> ghostList) {
-        this.cellList=cellList;
-        this.ghostList=ghostList;
-        this.pacman=pacman;
-        this.numberGommes = numberGommes;
-        this.bestScore=0;
-        this.level=1;
-        this.lives=3;
-        this.score=0;
-        this.ghostEaten = 0;
-    }
-
-
-    /**
-     * Initialize a new game passing a board as an argument
-     * @param pacman
-     * @param cellList
-     * @param numberGommes
-     * @param ghostList
-     * @param board
-     */
-    public Game(Pacman pacman,  ArrayList<Cell> cellList, int numberGommes, ArrayList<Ghost> ghostList,
-                int[][] board) {
-        this.cellList=cellList;
-        this.ghostList=ghostList;
-        this.pacman=pacman;
-        this.numberGommes = numberGommes;
-        this.bestScore=0;
-        this.level=1;
-        this.lives=3;
-        this.score=0;
-        this.ghostEaten = 0;
-        this.board = board;
-    }
 
 
     public int getBestScore() { return bestScore; }
@@ -190,30 +137,6 @@ public class Game {
         return this.board;
     }
 
-    /**
-     * Move any MovableElement in the given direction
-     * @param me : MovableElement to move
-     * @param dx : int corresponding movement in the axe x
-     * @param dy : int corresponding the movement in the axe y
-     * @return boolean true if the move is legit, false otherwise
-     */
-    public boolean move(MovableElement me, int dx, int dy){
-        Cell actualCell = me.getCell();
-        Cell futureCell = new Cell(actualCell.getX()+dx, actualCell.getY()+dy, false);
-
-        int ind = this.cellList.indexOf(futureCell);
-
-        // The futur cell is either a wall or invalide x and y
-        // It's not in the cell list of the game
-        if (ind == -1)
-            return false;
-
-        actualCell.removeMovableElement(me);
-        futureCell.addMovableElement(me);
-        me.setCell(futureCell);
-
-        return true;
-    }
 
     /**
      * Check the cell containing pacman
@@ -251,18 +174,6 @@ public class Game {
         me.setCell(futurCell);
     }
 
-
-    /**
-     * Move an element by following the cell contained in the stack
-     * @param me : MovableElement to move
-     * @param stack : Stack<Cell> containing the cells to go
-     */
-    public void move(MovableElement me, Stack<Cell> stack) {
-        while(!stack.empty()){
-            Cell c = stack.pop();
-            this.moveTo(me, c);
-        }
-    }
 
     public void movePacman(Direction dir) {
         Cell c = getNextCell(pacman.getCell(), dir);
