@@ -56,14 +56,12 @@ public class PathFinding {
      * @return
      */
     public Stack<Cell> buildWay(Cell c, Cell beginCell) {
-        System.out.println("Enter buildWay");
         Stack<Cell> res = new Stack<>();
         res.push(c);
         Cell tmp = c.getPreviousCell();
         while (tmp != null && !tmp.equals(beginCell)) {
             res.push(tmp);
             tmp = tmp.getPreviousCell();
-            //System.out.println("Size stack: " + res.size());
         }
 
         // Clean all the previous cell to avoid stack overhead
@@ -107,11 +105,6 @@ public class PathFinding {
      * @return
      */
     private int getDistance(Cell c1, Cell c2) {
-        /*
-        System.out.println("Enter getDistance");
-        System.out.println("C1: " + c1);
-        System.out.println("C2: " + c2);
-        */
         int dx = Math.abs(c1.getX() - c2.getX());
         int dy = Math.abs(c1.getY() - c2.getY());
         return dx + dy;

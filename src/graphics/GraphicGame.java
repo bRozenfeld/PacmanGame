@@ -40,8 +40,6 @@ public class GraphicGame extends JFrame {
         this.setBounds(x,y,w,h);
 
         this.initComponents(game);
-        //this.initBoardBis(game);
-        //this.initBoard(game);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
@@ -55,8 +53,8 @@ public class GraphicGame extends JFrame {
 
     /************* Initialisation part *********************/
     private void initComponents(Game g) {
-        //this.initBoard(g);
-        this.initBoardBis(g);
+        this.initBoard(g);
+        //this.initBoardBis(g);
         this.add(this.pBoard, BorderLayout.CENTER);
 
         JPanel pSouth = this.initiPanelSouth(g);
@@ -85,6 +83,22 @@ public class GraphicGame extends JFrame {
                 gc.setBackground(Color.BLUE);
             }
             else {
+                if (gc.getCell().getStaticElement() instanceof Gomme) {
+                    Gomme gum = (Gomme) gc.getCell().getStaticElement();
+                    GraphicGomme gg = new GraphicGomme(gum);
+                    gc.add(gg);
+                }
+                if (!gc.getCell().getMovableElementList().isEmpty()) {
+                    MovableElement me = gc.getCell().getMovableElementList().get(0);
+                    if (me instanceof Pacman) {
+                        GraphicPacman gp = new GraphicPacman();
+                        gc.add(gp);
+                    } else if(me instanceof  Ghost){
+                        Ghost ghost = (Ghost) me;
+                        GraphicGhost gg = new GraphicGhost(ghost);
+                        gc.add(gg);
+                    }
+                }
                 gc.setBackground(Color.BLACK);
             }
             pBoard.add(gc);
@@ -191,7 +205,7 @@ public class GraphicGame extends JFrame {
     private void render() {
         if(game.isOver()) initPanelOver();
         else {
-            this.updateBoardG();
+            this.updateBoard();
             this.updateInfo();
         }
     }
@@ -223,15 +237,16 @@ public class GraphicGame extends JFrame {
 
 
     private void updateGame(int i) {
-        game.checkPacman();
         game.checkGhost();
+        game.setBonus();
 
-        if(game.getPacman().isEaten() == false) {
+        if (game.getPacman().isEaten() == false) {
             game.getPacman().move();
+            game.checkPacman();
             updateGhost(i);
+            game.checkPacman();
 
-        }
-        else { //Il faudrait rajouter du temps avant de repasser à true
+        } else { //Il faudrait rajouter du temps avant de repasser à true
             game.rebuildLevel();
             game.getPacman().setIsEaten(false);
         }
@@ -242,22 +257,28 @@ public class GraphicGame extends JFrame {
         int i = 0;
         game.setGhostsMoves();
 
-        while(this.isRunning && !game.isOver()) {
-            // Informations
-            System.out.println("Tour :" + i);
-            //this.displayPacmanPosition();
+        while(!game.isOver()) {
+            while(isRunning) {
+                // Informations
+                System.out.println("Tour :" + i);
+                //this.displayPacmanPosition();
 
-            this.updateGame(i);
-            this.render();
+                this.updateGame(i);
+                this.render();
 
-            try {
-                Thread.sleep(1000);
-            } catch(Exception e){}
-            i++;
+                try {
+                    Thread.sleep(2000);
+                } catch (Exception e) {
+                }
+                i++;
+            }
+            doNothing();
+
         }
     }
 
 
+    private void doNothing(){}
 
     /************ Inner class Part ***************************/
     class RunListener implements MouseListener {
@@ -443,6 +464,50 @@ public class GraphicGame extends JFrame {
                                         gc.setBackground(Color.RED);
                                         break;
                                 }
+                            }
+                        }
+                }
+            }
+            gc.repaint();
+            gc.revalidate();
+        }
+    }
+
+
+    private void updateBoard() {
+        for(GraphicCell gc : listCell) {
+            gc.removeAll();
+            if(gc.getCell().getIsWall()==true) gc.setBackground(Color.BLUE);
+            else {
+                if (gc.getCell().getStaticElement() == null && gc.getCell().getMovableElementList().isEmpty()) {
+                    gc.setBackground(Color.BLACK);
+                }
+                if(gc.getCell().getStaticElement() != null) {
+                    if (gc.getCell().getStaticElement() instanceof Gomme) {
+                        Gomme gum = (Gomme) gc.getCell().getStaticElement();
+                        GraphicGomme gg = new GraphicGomme(gum);
+                        gc.add(gg);
+                    }
+                    else if(gc.getCell().getStaticElement() instanceof Bonus) {
+                        gc.setBackground(Color.WHITE);
+                    }
+                }
+                if (!gc.getCell().getMovableElementList().isEmpty()) {
+                    for (MovableElement me : gc.getCell().getMovableElementList())
+                        if (me instanceof Pacman) {
+                            GraphicPacman gp = new GraphicPacman();
+                            gc.add(gp);
+                        } else if(me instanceof  Ghost){
+                            Ghost ghost = (Ghost) me;
+                            if(ghost.getVulnerabilityTime() > 0) {
+                                gc.setBackground(Color.BLUE);
+                            }
+                            else if(ghost.getIsRegenerating() == true) {
+                                gc.setBackground(Color.WHITE);
+                            }
+                            else {
+                                GraphicGhost gg = new GraphicGhost(ghost);
+                                gc.add(gg);
                             }
                         }
                 }

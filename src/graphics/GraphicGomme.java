@@ -2,12 +2,13 @@ package graphics;
 
 import model.Gomme;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**
  * Class representing the graphic part of a gomme
  */
-public class GraphicGomme extends Component {
+public class GraphicGomme extends JPanel {
 
     private Gomme gomme;
 
