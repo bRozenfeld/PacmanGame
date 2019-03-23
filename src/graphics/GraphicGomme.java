@@ -19,12 +19,11 @@ public class GraphicGomme extends JPanel {
     }
 
     public void paint(Graphics g){
-        this.setSize(this.getParent().getSize());
         Graphics2D g2d = (Graphics2D)g;
         int x = 0;
         int y = 0;
-        int w = getSize().width/2 ;
-        int h = getSize().width/2 ;
+        int w = this.getParent().getSize().width/2 ;
+        int h = this.getParent().getSize().width/2 ;
         g2d.setBackground(Color.BLACK);
         g2d.setColor(Color.YELLOW);
         if(this.gomme.getIsSuper()==true){

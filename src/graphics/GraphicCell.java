@@ -16,6 +16,7 @@ public class GraphicCell extends JPanel {
     public GraphicCell(Cell cell) {
         super();
         this.cell = cell;
+        this.setLayout(new BorderLayout());
         //this.initComponent(cell);
     }
 

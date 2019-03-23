@@ -68,6 +68,7 @@ public class Launcher {
 
         Game g = new Game(board1);
 
+
         GraphicGame gg = new GraphicGame("Pacman", 200, 200, 500, 600, g);
 
 
@@ -76,6 +77,8 @@ public class Launcher {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+
 
     }
 }

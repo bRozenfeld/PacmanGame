@@ -493,6 +493,7 @@ public class GraphicGame extends JFrame {
                     }
                 }
                 if (!gc.getCell().getMovableElementList().isEmpty()) {
+                    gc.removeAll();
                     for (MovableElement me : gc.getCell().getMovableElementList())
                         if (me instanceof Pacman) {
                             GraphicPacman gp = new GraphicPacman();
