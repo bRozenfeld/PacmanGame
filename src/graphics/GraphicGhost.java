@@ -12,10 +12,6 @@ public class GraphicGhost extends JPanel {
 
     private Ghost ghost;
 
-    public GraphicGhost() {
-
-    }
-
     public GraphicGhost(Ghost ghost) {
         super();
         this.ghost = ghost;

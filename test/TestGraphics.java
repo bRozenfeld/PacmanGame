@@ -1,10 +1,8 @@
+import graphics.GraphicBonus;
 import graphics.GraphicGhost;
 import graphics.GraphicGomme;
 import graphics.GraphicPacman;
-import model.Cell;
-import model.Ghost;
-import model.Gomme;
-import model.GhostColor;
+import model.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +13,7 @@ public class TestGraphics {
         TestGraphics tg = new TestGraphics();
 
         Frame frame = new Frame("test");
-        GraphicPacman gp = new GraphicPacman();
+        //GraphicPacman gp = new GraphicPacman();
         Cell c = new Cell(1,1,false);
         Cell bc = new Cell(2,1,false);
         Ghost g = new Ghost(c, bc);
@@ -41,14 +39,19 @@ public class TestGraphics {
         JPanel jp5 = new JPanel();
 
         jp5.setBackground(Color.BLACK);
-        jp1.add(ggo);
+        //jp1.add(ggo);
         //frame.add(ggo);
         //frame.add(jp1);
         //frame.add(gg);
         //frame.add(jp2);
         //  frame.add(jp3);
         //frame.add(jp4);
-        frame.add(jp1);
+        Bonus b = new Bonus(100, TypeBonus.Cherry);
+        ImageIcon im = new ImageIcon("res/images/chery.jpg");
+        System.out.println(im.getImage());
+        GraphicBonus gb = new GraphicBonus("res/images/cherry.jpg",b);
+        //jp1.add(gb);
+        frame.add(gb);
 
         frame.setBounds(200,200,400,400);
         frame.setVisible(true);

@@ -32,11 +32,12 @@ public class Game {
     private static final int GUM = 1;
     private static final int SUPER_GOMME = 2;
     private static final int PACMAN = 3;
-    private static final int BLINKY = 4;
+    private static final int VOID_CELL = 4;
     private static final int BONUS = 5;
     private static final int PINKY = 6;
     private static final int INKY = 7;
     private static final int CLYDE = 8;
+    private static final int BLINKY = 9;
 
     /**
      * int representing the best score
@@ -128,6 +129,8 @@ public class Game {
     public Game(int[][] board) {
         this.cellList = new ArrayList<>();
         this.ghostList = new ArrayList<>();
+
+
         this.initGame(board);
         this.level = 1;
         this.lives = 200000;
@@ -522,6 +525,10 @@ public class Game {
                     this.cellList.add(c);
                     this.ghostList.add(g);
                 }
+                else if(board[i][j] == VOID_CELL) {
+                    Cell c = new Cell(j,i, false);
+                    this.cellList.add(c);
+                }
             }
         }
     }
@@ -529,15 +536,14 @@ public class Game {
     /**
      * Initialize the bonus for the corresponding level
      * If no bonus is in the bonus cell then
-     * 1 chance on 9 to have the bonus appear
+     * 1 chance on 50 to have the bonus appear
+     * 2 bonus should appear each level
      */
     public void setBonus() {
         if(bonusCell.getStaticElement() == null) {
 
             Random r = new Random();
             int rand = r.nextInt(50);
-            System.out.println("rand:" + rand);
-            System.out.println("res:" + bonusRemaining);
             if (rand == 0) {
                 if(this.level == 1) {
                     this.bonusCell.addStaticElement(new Bonus(100, TypeBonus.Cherry));
@@ -632,6 +638,10 @@ public class Game {
              }
          }
          return res;
+     }
+
+     private void initBoard() {
+
      }
 
     /**
