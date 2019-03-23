@@ -41,7 +41,6 @@ public class Pacman extends MovableElement{
     }
 
     public void move() {
-        System.out.println("You move");
         Cell futureCell = (Cell) cellQueue.pollFirst();
         if(futureCell != null) {
             this.getCell().removeMovableElement(this);

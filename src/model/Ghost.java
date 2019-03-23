@@ -11,61 +11,79 @@ public class Ghost extends MovableElement {
 
     private PathFinding pf;
 
-    private boolean isVulnerable;
     private boolean isRegenerating;
-    private GhostName name;
+    private final GhostName name;
+
+    private int vulnerabilityTime;
 
     private Stack<Cell> cellStack;
 
     public Ghost(Cell cell, Cell beginCell) {
         super(cell, beginCell);
         this.isRegenerating = false;
-        this.isVulnerable = false;
         this.name = null;
         this.pf = new PathFinding();
         this.cellStack = new Stack<>();
+        this.vulnerabilityTime = 0;
     }
 
     public Ghost(Cell cell, GhostName name, Cell beginCell) {
         super(cell, beginCell);
         this.name = name;
-        this.isVulnerable = false;
         this.isRegenerating = false;
         this.pf = new PathFinding();
         this.cellStack = new Stack<>();
+        this.vulnerabilityTime = 0;
     }
+
+    public int getVulnerabilityTime() {
+        return vulnerabilityTime;
+    }
+
+    public void setVulnerabilityTime(int vulnerabilityTime) {
+        this.vulnerabilityTime = vulnerabilityTime;
+    }
+
 
     public GhostName getName() {
         return name;
-    }
-
-    public void setName(GhostName name) {
-        this.name = name;
     }
 
     public boolean getIsRegenerating() {
         return isRegenerating;
     }
 
-    public boolean getIsVulnerable() {
-        return isVulnerable;
-    }
-
     public void setIsRegenerating(boolean regenerating) {
         isRegenerating = regenerating;
     }
 
-    public void setIsVulnerable(boolean isVulnerable) {
-        this.isVulnerable = isVulnerable;
-    }
-
     /**
      * Define stack of cell where to ghost will have to go using the pathfinding
+     * If the ghost is regenerating or is vulnerable, move toward his begin cell
+     * Else move toward endCell
      * @param endCell : Cell to go
      * @param graph : ArrayList of Cell containing all the Cell in the game
      */
     public void setMoves(ArrayList<Cell> graph, Cell endCell) {
-        cellStack = pf.getWay(graph, this.getCell(), endCell);
+            cellStack = pf.getWay(graph, this.getCell(), endCell);
+    }
+
+    /**
+     * Define a way to come back to its initial position
+     * @param graph
+     */
+    public void setRegeneratingMoves(ArrayList<Cell> graph) {
+        cellStack = pf.getWay(graph, this.getCell(), this.getBeginCell());
+    }
+
+    /**
+     * Verify the statut isregenerating of a ghost
+     * If isregenrating = true and he is on his begincell
+     * Then switch isregenerating to false
+     */
+    public void checkIsRegenerating() {
+        if(isRegenerating && this.getCell().equals(getBeginCell()))
+            isRegenerating = false;
     }
 
     public Stack<Cell> getCellStack() {
@@ -77,7 +95,6 @@ public class Ghost extends MovableElement {
     }
 
     public void move() {
-        System.out.println("One move");
         Cell futureCell = null;
         if (!cellStack.empty()) {
             futureCell = cellStack.pop();
@@ -93,12 +110,15 @@ public class Ghost extends MovableElement {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ghost ghost = (Ghost) o;
-        return isVulnerable == ghost.isVulnerable &&
-                name == ghost.name;
+        return isRegenerating == ghost.isRegenerating &&
+                vulnerabilityTime == ghost.vulnerabilityTime &&
+                Objects.equals(pf, ghost.pf) &&
+                name == ghost.name &&
+                Objects.equals(cellStack, ghost.cellStack);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(isVulnerable, name);
+        return Objects.hash(pf, isRegenerating, name, vulnerabilityTime, cellStack);
     }
 }

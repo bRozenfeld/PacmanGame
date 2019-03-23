@@ -90,6 +90,16 @@ public class Game {
 
     private boolean isOver;
 
+    /**
+     * int representing the remaining time when ghost become blue
+     * Its value depend on the level of the game
+     */
+    private int ghostBlueTime;
+
+    /**
+     * int representing the remaining time when their vulnerability is about to go
+     */
+    private int flashBeforeBlueTimeEnd;
 
 
     /**
@@ -116,6 +126,8 @@ public class Game {
         this.bestScore = this.readBestScore();
         this.board = board;
         this.isOver = false;
+        this.ghostBlueTime = 6;
+        this.flashBeforeBlueTimeEnd = 5;
     }
 
 
@@ -158,6 +170,20 @@ public class Game {
         return this.board;
     }
 
+
+    /**
+     * Check the state of the ghosts in the game
+     * That means checking their vulnerability or
+     * If they are regenerating or not
+     */
+    public void checkGhost() {
+        for(Ghost g : ghostList) {
+            if(g.getVulnerabilityTime() > 0) {
+                g.setVulnerabilityTime(g.getVulnerabilityTime()-1);
+            }
+            g.checkIsRegenerating();
+        }
+    }
 
     /**
      * Check the cell containing pacman
@@ -232,13 +258,13 @@ public class Game {
      * He aims for a position in front of pacman mouth
      */
     public void setPinkyMoves(Ghost g) {
-        Cell c = getNextCell(pacman.getCell(), pacman.getDirection());
-        Cell tmp = c;
-        while (c != null && c.getIsWall() == false) {
-            tmp = c;
-            c = getNextCell(c, pacman.getDirection());
+        Cell c = (Cell) pacman.getCellQueue().peekFirst();
+        if(c != null) {
+            g.setMoves(cellList, c);
         }
-        g.setMoves(cellList, tmp);
+        else {
+            g.setMoves(cellList, pacman.getCell());
+        }
     }
 
     /**
@@ -266,9 +292,9 @@ public class Game {
      * @param g : Ghost Inky
      */
     public void setInkyMoves(Ghost g) {
-        PathFinding pf = new PathFinding();
         Random r = new Random();
         int rand = r.nextInt(2); // random int between 0 and 1
+        System.out.println(rand);
         if(rand == 0) { // run toward pacman
             g.setMoves(cellList, pacman.getCell());
         }
@@ -288,7 +314,7 @@ public class Game {
             while(!find) { // in case no cell is found, pick a random one
                 rand = r.nextInt(cellList.size());
                 Cell cell = cellList.get(rand);
-                if(!cell.getIsWall()) {
+                if(cell.getIsWall() != false) {
                     g.setMoves(cellList, cell);
                     find = true;
                 }
@@ -511,16 +537,18 @@ public class Game {
 
     private void pacmanMeetGhost(Ghost g) {
         // pacman eat the ghost
-        if (g.getIsVulnerable() == true) {
+        if (g.getVulnerabilityTime() > 0) {
             this.ghostEaten++;
             this.score += 100 * (int)Math.pow(2,this.ghostEaten);
             g.setIsRegenerating(true);
-            this.moveTo(g, g.getBeginCell());
+            g.setVulnerabilityTime(0);
+            g.setRegeneratingMoves(cellList);
         }
         // pacman is eaten by the ghost
         else {
             this.lives--;
             pacman.setIsEaten(true);
+            setGhostsMoves();
             if(this.lives == 0) {
                 this.gameOver();
             }
@@ -540,7 +568,7 @@ public class Game {
             Gomme g = (Gomme) se;
             if (g.getIsSuper() == true) {
                 for(Ghost ghost : this.ghostList) {
-                    ghost.setIsVulnerable(true);
+                    ghost.setVulnerabilityTime(ghostBlueTime + flashBeforeBlueTimeEnd);
                 }
             }
         }

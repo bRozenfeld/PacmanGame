@@ -199,7 +199,9 @@ public class GraphicGame extends JFrame {
     private void updateGhost(int timer) {
         for (Ghost g : this.game.getGhostList()) {
             g.move();
-            if (g.getCellStack().size()==1) {
+            if(g.getIsRegenerating() == true)
+                g.move(); // he will go 2 times faster
+            else if (g.getCellStack().size()==0) {
                 switch (g.getName()) {
                     case Inky:
                         game.setInkyMoves(g);
@@ -216,16 +218,18 @@ public class GraphicGame extends JFrame {
                 }
             }
         }
-        this.displayGhostPosition();
+        //this.displayGhostPosition();
     }
 
 
     private void updateGame(int i) {
         game.checkPacman();
+        game.checkGhost();
 
         if(game.getPacman().isEaten() == false) {
             game.getPacman().move();
             updateGhost(i);
+
         }
         else { //Il faudrait rajouter du temps avant de repasser à true
             game.rebuildLevel();
@@ -241,13 +245,13 @@ public class GraphicGame extends JFrame {
         while(this.isRunning && !game.isOver()) {
             // Informations
             System.out.println("Tour :" + i);
-            this.displayPacmanPosition();
+            //this.displayPacmanPosition();
 
             this.updateGame(i);
             this.render();
 
             try {
-                Thread.sleep(3000);
+                Thread.sleep(1000);
             } catch(Exception e){}
             i++;
         }
@@ -359,6 +363,8 @@ public class GraphicGame extends JFrame {
                     } else if (gum.getIsSuper() == true){
                         gc.setBackground(Color.GRAY);
                     }
+                } else if(gc.getCell().getStaticElement() instanceof Bonus) {
+                    gc.setBackground(Color.WHITE);
                 }
                 if (!gc.getCell().getMovableElementList().isEmpty()) {
                     MovableElement me = gc.getCell().getMovableElementList().get(0);
@@ -406,6 +412,9 @@ public class GraphicGame extends JFrame {
                             gc.setBackground(Color.GRAY);
                         }
                     }
+                    else if(gc.getCell().getStaticElement() instanceof Bonus) {
+                        gc.setBackground(Color.WHITE);
+                    }
                 }
                 if (!gc.getCell().getMovableElementList().isEmpty()) {
                     for (MovableElement me : gc.getCell().getMovableElementList())
@@ -413,21 +422,28 @@ public class GraphicGame extends JFrame {
                             gc.setBackground(Color.YELLOW);
                         } else if(me instanceof  Ghost){
                             Ghost ghost = (Ghost) me;
-                            switch(ghost.getName()) {
-                                case Pinky:
-                                    gc.setBackground(Color.PINK);
-                                    break;
-                                case Inky:
-                                    gc.setBackground(Color.CYAN);
-                                    break;
-                                case Clyde:
-                                    gc.setBackground(Color.ORANGE);
-                                    break;
-                                case Blinky:
-                                    gc.setBackground(Color.RED);
-                                    break;
+                            if(ghost.getVulnerabilityTime() > 0) {
+                                gc.setBackground(Color.BLUE);
                             }
-
+                            else if(ghost.getIsRegenerating() == true) {
+                                gc.setBackground(Color.WHITE);
+                            }
+                            else {
+                                switch (ghost.getName()) {
+                                    case Pinky:
+                                        gc.setBackground(Color.PINK);
+                                        break;
+                                    case Inky:
+                                        gc.setBackground(Color.CYAN);
+                                        break;
+                                    case Clyde:
+                                        gc.setBackground(Color.ORANGE);
+                                        break;
+                                    case Blinky:
+                                        gc.setBackground(Color.RED);
+                                        break;
+                                }
+                            }
                         }
                 }
             }
