@@ -3,6 +3,7 @@ package model;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Stack;
@@ -380,16 +381,13 @@ public class Game {
      * Move Pacman into the pacman direction until he meets a wall
      */
     public void setPacmanMoves() {
-        PathFinding pf = new PathFinding();
+        ArrayDeque ad = new ArrayDeque();
         Cell c = getNextCell(pacman.getCell(), pacman.getDirection());
-        c.setPreviousCell(pacman.getCell());
-        while (c.getIsWall() == false) {
-            Cell tmp =c;
+        while (c != null  && c.getIsWall() == false) {
+            ad.offerLast(c);
             c = getNextCell(c, pacman.getDirection());
-            if(c != null ) c.setPreviousCell(tmp);
-            else break;
         }
-        pacman.setCellStack(pf.buildWay(c, pacman.getCell()));
+        pacman.setCellQueue(ad);
 
     }
 
