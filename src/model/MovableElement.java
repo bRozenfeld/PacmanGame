@@ -17,15 +17,10 @@ public abstract class MovableElement {
      */
     private final Cell beginCell;
 
-    /**
-     * Contains the cells where to MovableElement has to go
-     */
-    private Stack<Cell> cellStack;
 
     public MovableElement(Cell cell, Cell beginCell) {
         this.cell = cell;
         this.beginCell = beginCell;
-        this.cellStack = new Stack<>();
     }
 
     public Cell getCell() {
@@ -36,29 +31,12 @@ public abstract class MovableElement {
         return beginCell;
     }
 
-    public Stack<Cell> getCellStack() {
-        return cellStack;
-    }
 
     public void setCell(Cell cell) {
         this.cell = cell;
     }
 
-    public void setCellStack(Stack<Cell> stack) {
-        this.cellStack = stack;
-    }
-
-
-    public void move() {
-        System.out.println("One move");
-        Cell futureCell = null;
-        if (!cellStack.empty()) {
-            futureCell = cellStack.pop();
-            cell.removeMovableElement(this);
-            futureCell.addMovableElement(this);
-            this.cell = futureCell;
-        }
-    }
+    public void move() {}
 
     /**
      * Display the position of the element in the terminal

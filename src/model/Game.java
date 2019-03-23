@@ -18,6 +18,27 @@ import java.util.Stack;
 public class Game {
 
     /**
+     * 2D array representing the board
+     * 0 : wall
+     * 1 : cell with gomme
+     * 2 : cell with super gomme
+     * 3 : starting cell for pacman
+     * 4 : starting cell for a ghost
+     * 5 : cell where bonus will appear
+     *
+     * P e à supprimer
+     */
+    private static final int WALL = 0;
+    private static final int GUM = 1;
+    private static final int SUPER_GOMME = 2;
+    private static final int PACMAN = 3;
+    private static final int BLINKY = 4;
+    private static final int BONUS = 5;
+    private static final int PINKY = 6;
+    private static final int INKY = 7;
+    private static final int CLYDE = 8;
+
+    /**
      * int representing the best score
      */
     private int bestScore;
@@ -188,7 +209,6 @@ public class Game {
      * Initialize a list of move for each ghost
      */
     public void setGhostsMoves() {
-        PathFinding pf = new PathFinding();
         for(Ghost g : this.ghostList) {
             switch(g.getName()) {
                 case Blinky:
@@ -204,7 +224,6 @@ public class Game {
                     setPinkyMoves(g);
                     break;
             }
-            g.setCellStack(pf.getWay(cellList, g.getCell(), pacman.getCell()));
         }
     }
 
@@ -212,16 +231,14 @@ public class Game {
      * Define list of movement to pinky
      * He aims for a position in front of pacman mouth
      */
-    private void setPinkyMoves(Ghost g) {
-        PathFinding pf = new PathFinding();
-
+    public void setPinkyMoves(Ghost g) {
         Cell c = getNextCell(pacman.getCell(), pacman.getDirection());
         Cell tmp = c;
         while (c != null && c.getIsWall() == false) {
             tmp = c;
             c = getNextCell(c, pacman.getDirection());
         }
-        g.setCellStack(pf.getWay(cellList, g.getCell(), tmp));
+        g.setMoves(cellList, tmp);
     }
 
     /**
@@ -229,7 +246,7 @@ public class Game {
      * Clyde behavior is totally random on the map
      * @param g : Ghost g representing clyde
      */
-    private void setClydeMoves(Ghost g) {
+    public void setClydeMoves(Ghost g) {
         PathFinding pf = new PathFinding();
         Random r = new Random();
         boolean find = false;
@@ -237,7 +254,7 @@ public class Game {
             int rand = r.nextInt(cellList.size());
             Cell c = cellList.get(rand);
             if(!c.getIsWall()) {
-                g.setCellStack(pf.getWay(cellList, g.getCell(), c));
+                g.setMoves(cellList, c);
                 find = true;
             }
         }
@@ -253,7 +270,7 @@ public class Game {
         Random r = new Random();
         int rand = r.nextInt(2); // random int between 0 and 1
         if(rand == 0) { // run toward pacman
-            g.setCellStack(pf.getWay(cellList, g.getCell(), pacman.getCell()));
+            g.setMoves(cellList, pacman.getCell());
         }
         else { // run away from pacman
             boolean find = false;
@@ -262,7 +279,7 @@ public class Game {
                     int dx = Math.abs(c.getX() - pacman.getCell().getX());
                     int dy = Math.abs(c.getY() - pacman.getCell().getY());
                     if(dx >= 5 && dy >= 5) {
-                        g.setCellStack(pf.getWay(cellList, g.getCell(), c));
+                        g.setMoves(cellList, c);
                         find = true;
                         break;
                     }
@@ -272,7 +289,7 @@ public class Game {
                 rand = r.nextInt(cellList.size());
                 Cell cell = cellList.get(rand);
                 if(!cell.getIsWall()) {
-                    g.setCellStack(pf.getWay(cellList, g.getCell(), cell));
+                    g.setMoves(cellList, cell);
                     find = true;
                 }
             }
@@ -284,8 +301,7 @@ public class Game {
      * Blinky is just following pacman all time
      */
     public void setBlinkyMoves(Ghost g) {
-        PathFinding pf = new PathFinding();
-        g.setCellStack(pf.getWay(cellList, g.getCell(), pacman.getCell()));
+        g.setMoves(cellList, pacman.getCell());
     }
 
     /**
@@ -387,7 +403,7 @@ public class Game {
         this.pacman.getCell().removeMovableElement(this.pacman);
         this.pacman.getBeginCell().addMovableElement(this.pacman);
         this.pacman.setCell(this.pacman.getBeginCell());
-        this.pacman.setCellStack(new Stack<>());
+        this.pacman.setCellQueue(new ArrayDeque());
 
     }
 
@@ -406,55 +422,55 @@ public class Game {
     private void initGame(int [][] board) {
         for(int i = 0; i < board.length; i++) {
             for(int j = 0; j < board[0].length; j++) {
-                if(board[i][j] == 0) {
+                if(board[i][j] == WALL) {
                     Cell c = new Cell(j, i, true);
                     this.cellList.add(c);
                 }
-                else if (board[i][j] == 1) {
+                else if (board[i][j] == GUM) {
                     Gomme g = new Gomme(10, false);
                     Cell c = new Cell(j,i,false,g,g);
                     this.cellList.add(c);
                     this.numberGommes++;
                 }
-                else if (board[i][j] == 2) {
+                else if (board[i][j] == SUPER_GOMME) {
                     Gomme g = new Gomme(50, true);
                     Cell c = new Cell(j,i,false,g,g);
                     this.cellList.add(c);
                     this.numberGommes++;
                 }
-                else if(board[i][j] == 3) {
+                else if(board[i][j] == PACMAN) {
                     Cell c = new Cell(j,i,false);
                     this.pacman = new Pacman(c,c);
                     c.addMovableElement(pacman);
                     this.cellList.add(c);
                 }
-                else if(board[i][j] == 4) {
+                else if(board[i][j] == BLINKY) {
                     Cell c = new Cell(j,i,false);
                     Ghost g = new Ghost(c,GhostName.Blinky, c);
                     c.addMovableElement(g);
                     this.cellList.add(c);
                     this.ghostList.add(g);
                 }
-                else if(board[i][j] == 5) {
+                else if(board[i][j] == BONUS) {
                     Cell c = new Cell(i,j,false);
                     Bonus bonus = new Bonus(100, TypeBonus.Cherry, c);
                     this.cellList.add(c);
                 }
-                else if(board[i][j] == 6) {
+                else if(board[i][j] == PINKY) {
                     Cell c = new Cell(j,i,false);
                     Ghost g = new Ghost(c,GhostName.Pinky, c);
                     c.addMovableElement(g);
                     this.cellList.add(c);
                     this.ghostList.add(g);
                 }
-                else if(board[i][j] == 7) {
+                else if(board[i][j] == INKY) {
                     Cell c = new Cell(j,i,false);
                     Ghost g = new Ghost(c,GhostName.Inky, c);
                     c.addMovableElement(g);
                     this.cellList.add(c);
                     this.ghostList.add(g);
                 }
-                else if(board[i][j] == 8) {
+                else if(board[i][j] == CLYDE) {
                     Cell c = new Cell(j,i,false);
                     Ghost g = new Ghost(c,GhostName.Clyde, c);
                     c.addMovableElement(g);

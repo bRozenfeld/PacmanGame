@@ -196,15 +196,36 @@ public class GraphicGame extends JFrame {
         }
     }
 
+    private void updateGhost(int timer) {
+        for (Ghost g : this.game.getGhostList()) {
+            g.move();
+            if (g.getCellStack().size()==1) {
+                switch (g.getName()) {
+                    case Inky:
+                        game.setInkyMoves(g);
+                        break;
+                    case Pinky:
+                        game.setPinkyMoves(g);
+                        break;
+                    case Blinky:
+                        game.setBlinkyMoves(g);
+                        break;
+                    case Clyde:
+                        game.setClydeMoves(g);
+                        break;
+                }
+            }
+        }
+        this.displayGhostPosition();
+    }
+
+
     private void updateGame(int i) {
         game.checkPacman();
 
         if(game.getPacman().isEaten() == false) {
             game.getPacman().move();
-            if(i % 5 == 0 || i ==0) game.setGhostsMoves(); //refresh the stack only each 5 sleep
-            for (Ghost g : this.game.getGhostList()) {
-                g.move();
-            }
+            updateGhost(i);
         }
         else { //Il faudrait rajouter du temps avant de repasser à true
             game.rebuildLevel();
@@ -215,17 +236,18 @@ public class GraphicGame extends JFrame {
     /************* Loop Game Part **************************/
     public void run() throws InterruptedException {
         int i = 0;
+        game.setGhostsMoves();
 
         while(this.isRunning && !game.isOver()) {
             // Informations
             System.out.println("Tour :" + i);
-            //this.displayPacmanPosition();
+            this.displayPacmanPosition();
 
             this.updateGame(i);
             this.render();
 
             try {
-                Thread.sleep(1000);
+                Thread.sleep(3000);
             } catch(Exception e){}
             i++;
         }
@@ -379,9 +401,9 @@ public class GraphicGame extends JFrame {
                     if (gc.getCell().getStaticElement() instanceof Gomme) {
                         Gomme gum = (Gomme) gc.getCell().getStaticElement();
                         if (gum.getIsSuper() == false) {
-                            gc.setBackground(Color.ORANGE);
+                            gc.setBackground(Color.GREEN);
                         } else if (gum.getIsSuper() == true) {
-                            gc.setBackground(Color.PINK);
+                            gc.setBackground(Color.GRAY);
                         }
                     }
                 }
@@ -389,8 +411,23 @@ public class GraphicGame extends JFrame {
                     for (MovableElement me : gc.getCell().getMovableElementList())
                         if (me instanceof Pacman) {
                             gc.setBackground(Color.YELLOW);
-                        } else {
-                            gc.setBackground(Color.RED);
+                        } else if(me instanceof  Ghost){
+                            Ghost ghost = (Ghost) me;
+                            switch(ghost.getName()) {
+                                case Pinky:
+                                    gc.setBackground(Color.PINK);
+                                    break;
+                                case Inky:
+                                    gc.setBackground(Color.CYAN);
+                                    break;
+                                case Clyde:
+                                    gc.setBackground(Color.ORANGE);
+                                    break;
+                                case Blinky:
+                                    gc.setBackground(Color.RED);
+                                    break;
+                            }
+
                         }
                 }
             }
