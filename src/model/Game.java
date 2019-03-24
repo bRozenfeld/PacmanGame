@@ -140,7 +140,7 @@ public class Game {
 
         this.board = board;
         this.level = 1;
-        this.lives = 200000;
+        this.lives = 3;
         this.score = 0;
         this.ghostEaten = 0;
         this.bestScore = this.readBestScore();
@@ -501,7 +501,11 @@ public class Game {
         }
     }
 
-
+    /**
+     *
+     * @param g
+     * @inv ghostEaten<5
+     */
     private void pacmanMeetGhost(Ghost g) {
         // pacman eat the ghost
         if (g.getVulnerabilityTime() > 0) {
@@ -509,6 +513,7 @@ public class Game {
             this.score += 100 * (int)Math.pow(2,this.ghostEaten);
             g.setIsRegenerating(true);
             g.setVulnerabilityTime(0);
+            if (this.ghostEaten==4){this.ghostEaten=0;}
             g.setRegeneratingMoves(cellList);
         }
         // pacman is eaten by the ghost
@@ -536,6 +541,7 @@ public class Game {
                 for(Ghost ghost : this.ghostList) {
                     ghost.setVulnerabilityTime(ghostBlueTime + flashBeforeBlueTimeEnd);
                 }
+                this.ghostEaten=0;
             }
         }
         else if(se instanceof Bonus){
@@ -573,7 +579,9 @@ public class Game {
          return res;
      }
 
-
+    /**
+     * Initialise the game board
+     */
     private void initBoard() {
         this.cellList = new ArrayList<>();
         this.ghostList = new ArrayList<>();

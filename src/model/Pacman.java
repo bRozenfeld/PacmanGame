@@ -7,6 +7,7 @@ public class Pacman extends MovableElement{
     private Direction direction; //the direction of pacman mouth
     private boolean mouthOpen;
 
+
     private ArrayDeque cellQueue;
 
     public Pacman(Cell cell, Cell beginCell) {
@@ -14,6 +15,7 @@ public class Pacman extends MovableElement{
         direction = Direction.Left;
         cellQueue = new ArrayDeque();
         this.mouthOpen = true;
+
     }
 
 
@@ -47,5 +49,6 @@ public class Pacman extends MovableElement{
     public boolean isMouthOpen() {
         return mouthOpen;
     }
+
 
 }
