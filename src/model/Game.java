@@ -144,7 +144,9 @@ public class Game {
         this.bonusRemaining = 2;
     }
 
-
+    public Bonus getBonus() {
+        return bonus;
+    }
 
     public int getBestScore() { return bestScore; }
 
@@ -426,7 +428,7 @@ public class Game {
         this.pacman.getBeginCell().addMovableElement(this.pacman);
         this.pacman.setCell(this.pacman.getBeginCell());
 
-        this.level++;
+        level++;
 
         this.setGhostTime();
     }
@@ -538,34 +540,37 @@ public class Game {
      * 1 chance on 50 to have the bonus appear
      * 2 bonus should appear each level
      */
-    public void setBonus() {
-        if(bonusCell.getStaticElement() == null) {
-
+    public void setBonusCell() {
+        if(bonusCell.getStaticElement() == null && bonusRemaining > 0) {
             Random r = new Random();
             int rand = r.nextInt(50);
             if (rand == 0) {
-                if(this.level == 1) {
-                    this.bonusCell.addStaticElement(new Bonus(100, TypeBonus.Cherry));
-                }
-                else if (this.level == 2) {
-                    this.bonusCell.addStaticElement(new Bonus(300, TypeBonus.Strawberry));
-                } else if (this.level == 3 || this.level == 4) {
-                    this.bonusCell.addStaticElement(new Bonus(500, TypeBonus.Orange));
-                } else if (this.level == 5 || this.level == 6) {
-                    this.bonusCell.addStaticElement(new Bonus(700, TypeBonus.Orange));
-                } else if (this.level == 7 || this.level == 8) {
-                    this.bonusCell.addStaticElement(new Bonus(1000, TypeBonus.Melon));
-                } else if (this.level == 9 || this.level == 10) {
-                    this.bonusCell.addStaticElement(new Bonus(2000, TypeBonus.Galaxian));
-                } else if (this.level == 11 || this.level == 12) {
-                    this.bonusCell.addStaticElement(new Bonus(3000, TypeBonus.Bell));
-                } else if (this.level >= 13) {
-                    this.bonusCell.addStaticElement(new Bonus(5000, TypeBonus.Key));
-                }
+                bonusCell.addStaticElement(bonus);
                 bonusRemaining--;
             }
         }
     }
+
+    public void initBonus() {
+        if(level == 1) {
+            bonus = new Bonus(100, TypeBonus.Cherry);
+        } else if (level == 2) {
+            bonus = new Bonus(300, TypeBonus.Strawberry);
+        } else if (level == 3 || level == 4) {
+            bonus = new Bonus(500, TypeBonus.Orange);
+        } else if (level == 5 || level == 6) {
+            bonus = new Bonus(700, TypeBonus.Orange);
+        } else if (level == 7 || level == 8) {
+            bonus = new Bonus(1000, TypeBonus.Melon);
+        } else if (level == 9 || level == 10) {
+            bonus = new Bonus(2000, TypeBonus.Galaxian);
+        } else if (level == 11 || level == 12) {
+            bonus = new Bonus(3000, TypeBonus.Bell);
+        } else if (level >= 13) {
+            bonus = new Bonus(5000, TypeBonus.Key);
+        }
+    }
+
 
     private void pacmanMeetGhost(Ghost g) {
         // pacman eat the ghost

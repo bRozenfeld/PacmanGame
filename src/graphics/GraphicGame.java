@@ -96,7 +96,7 @@ public class GraphicGame extends JFrame {
                 if (!gc.getCell().getMovableElementList().isEmpty()) {
                     MovableElement me = gc.getCell().getMovableElementList().get(0);
                     if (me instanceof Pacman) {
-                        GraphicPacman gp = new GraphicPacman(g.getPacman(), gc, gc);
+                        GraphicPacman gp = new GraphicPacman(g.getPacman());
                         gc.add(gp);
                         pacmanCell = gc;
                         gPacman = gp;
@@ -145,7 +145,6 @@ public class GraphicGame extends JFrame {
         this.lScore=new JLabel("Score: " + g.getScore());
         this.pInfo.add(lScore);
     }
-
 
     private void initPanelProducers(){
         this.pProducers=new JPanel();
@@ -215,7 +214,6 @@ public class GraphicGame extends JFrame {
             //this.updateBoard();
             this.updateGraphics();
             this.updateInfo();
-            gPacman.changeMouth();
         }
     }
 
@@ -247,7 +245,7 @@ public class GraphicGame extends JFrame {
 
     private void updateGame(int i) {
         game.checkGhost();
-        game.setBonus();
+        game.setBonusCell();
 
         if (game.getPacman().isEaten() == false) {
             game.getPacman().move();
@@ -518,6 +516,18 @@ public class GraphicGame extends JFrame {
                     Gomme gum = (Gomme) se;
                     GraphicGomme gg = new GraphicGomme(gum);
                     gc.add(gg);
+                }
+                else if(se instanceof Bonus) {
+                    GraphicBonus gb = new GraphicBonus(game.getBonus());
+                    gc.add(gb);
+                }
+                // check the movable elements
+                if(!c.getMovableElementList().isEmpty()) {
+                    MovableElement me = c.getMovableElementList().get(0); // just need on the draw
+                    if (me instanceof  Pacman) {
+                        GraphicPacman gp = new GraphicPacman(game.getPacman());
+                        gc.add(gp);
+                    }
                 }
             }
             pBoard.add(gc);

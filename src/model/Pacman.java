@@ -6,6 +6,7 @@ public class Pacman extends MovableElement{
 
     private boolean isEaten;
     private Direction direction; //the direction of pacman mouth
+    private boolean mouthOpen;
 
     private ArrayDeque cellQueue;
 
@@ -14,6 +15,7 @@ public class Pacman extends MovableElement{
         isEaten = false;
         direction = Direction.Left;
         cellQueue = new ArrayDeque();
+        this.mouthOpen = true;
     }
 
     public boolean isEaten() {
@@ -47,7 +49,12 @@ public class Pacman extends MovableElement{
             futureCell.addMovableElement(this);
             this.setCell(futureCell);
         }
+        mouthOpen = !mouthOpen;
 
+    }
+
+    public boolean isMouthOpen() {
+        return mouthOpen;
     }
 
     public String toString() {

@@ -37,7 +37,7 @@ public class GraphicCell extends JPanel {
 
         }
 */
-
+/*
         if(cell.getIsWall() == false) {
             this.removeAll();
             StaticElement se = cell.getStaticElement();
@@ -67,6 +67,7 @@ public class GraphicCell extends JPanel {
         }
         this.repaint();
         this.revalidate();
+        */
     }
 
 }

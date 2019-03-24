@@ -46,12 +46,13 @@ public class TestGraphics {
         //frame.add(jp2);
         //  frame.add(jp3);
         //frame.add(jp4);
+
         Bonus b = new Bonus(100, TypeBonus.Cherry);
-        ImageIcon im = new ImageIcon("res/images/chery.jpg");
-        System.out.println(im.getImage());
-        GraphicBonus gb = new GraphicBonus("res/images/cherry.jpg",b);
+        //ImageIcon im = new ImageIcon("res/images/chery.jpg");
+        //System.out.println(im.getImage());
+        //GraphicBonus gb = new GraphicBonus("res/images/cherry.jpg",b);
         //jp1.add(gb);
-        frame.add(gb);
+        //frame.add(gb);
 
         frame.setBounds(200,200,400,400);
         frame.setVisible(true);
