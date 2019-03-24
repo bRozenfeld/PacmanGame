@@ -119,6 +119,10 @@ public class Game {
      */
     private int bonusRemaining;
 
+
+    private int gumsBeforeFirstBonus;
+    private int gumsBeforeSecondBonus;
+
     private boolean isNextLevel;
 
 
@@ -147,10 +151,14 @@ public class Game {
         this.board = board;
         this.isOver = false;
         this.isNextLevel = false;
+        this.bonusRemaining = 2;
 
         this.initBoard(); // init the board
         this.setGhostTime(); // init the ghost parameters
         this.initBonus(); // init the bonus
+
+        this.gumsBeforeFirstBonus = numberGommes / 3;
+        this.gumsBeforeSecondBonus = numberGommes * 2 / 3;
 
     }
 
@@ -294,10 +302,10 @@ public class Game {
     public void setPinkyMoves(Ghost g) {
         Cell c = (Cell) pacman.getCellQueue().peekFirst();
         if(c != null) {
-            g.setMoves(cellList, c);
+            g.setMoves(cellList, c, board);
         }
         else {
-            g.setMoves(cellList, pacman.getCell());
+            g.setMoves(cellList, pacman.getCell(), board);
         }
     }
 
@@ -314,7 +322,7 @@ public class Game {
             int rand = r.nextInt(cellList.size());
             Cell c = cellList.get(rand);
             if(!c.getIsWall()) {
-                g.setMoves(cellList, c);
+                g.setMoves(cellList, c, board);
                 find = true;
             }
         }
@@ -329,7 +337,7 @@ public class Game {
         Random r = new Random();
         int rand = r.nextInt(2); // random int between 0 and 1
         if(rand == 0) { // run toward pacman
-            g.setMoves(cellList, pacman.getCell());
+            g.setMoves(cellList, pacman.getCell(), board);
         }
         else { // run away from pacman
             boolean find = false;
@@ -338,7 +346,7 @@ public class Game {
                     int dx = Math.abs(c.getX() - pacman.getCell().getX());
                     int dy = Math.abs(c.getY() - pacman.getCell().getY());
                     if(dx >= 5 && dy >= 5) {
-                        g.setMoves(cellList, c);
+                        g.setMoves(cellList, c, board);
                         find = true;
                         break;
                     }
@@ -348,7 +356,7 @@ public class Game {
                 rand = r.nextInt(cellList.size());
                 Cell cell = cellList.get(rand);
                 if(cell.getIsWall() != false) {
-                    g.setMoves(cellList, cell);
+                    g.setMoves(cellList, cell, board);
                     find = true;
                 }
             }
@@ -360,7 +368,7 @@ public class Game {
      * Blinky is just following pacman all time
      */
     public void setBlinkyMoves(Ghost g) {
-        g.setMoves(cellList, pacman.getCell());
+        g.setMoves(cellList, pacman.getCell(), board);
     }
 
     /**
@@ -394,13 +402,15 @@ public class Game {
                 break;
             case Left:
                 for(Cell cell : this.cellList) {
-                    if(c.getX() == cell.getX()+1 && c.getY() == cell.getY())
+                    if((c.getX() == cell.getX()+1 ||  (Math.abs(cell.getX() - c.getX()) == board[0].length-1
+                            && cell.getX() > c.getX())) && c.getY() == cell.getY())
                         res = cell;
                 }
                 break;
             case Right:
                 for(Cell cell : this.cellList) {
-                    if(c.getX() == cell.getX()-1 && c.getY() == cell.getY())
+                    if((c.getX() == cell.getX()-1 ||  (Math.abs(cell.getX() - c.getX()) == board[0].length-1
+                            && cell.getX() < c.getX())) && c.getY() == cell.getY())
                         res = cell;
                 }
                 break;
@@ -514,7 +524,7 @@ public class Game {
             g.setIsRegenerating(true);
             g.setVulnerabilityTime(0);
             if (this.ghostEaten==4){this.ghostEaten=0;}
-            g.setRegeneratingMoves(cellList);
+            g.setRegeneratingMoves(cellList, board);
         }
         // pacman is eaten by the ghost
         else {
@@ -541,7 +551,6 @@ public class Game {
                 for(Ghost ghost : this.ghostList) {
                     ghost.setVulnerabilityTime(ghostBlueTime + flashBeforeBlueTimeEnd);
                 }
-                this.ghostEaten=0;
             }
         }
         else if(se instanceof Bonus){
@@ -579,9 +588,7 @@ public class Game {
          return res;
      }
 
-    /**
-     * Initialise the game board
-     */
+
     private void initBoard() {
         this.cellList = new ArrayList<>();
         this.ghostList = new ArrayList<>();

@@ -18,7 +18,7 @@ public class Cell {
     private StaticElement staticElement;
     private ArrayList<MovableElement> movableElementList;
 
-    // Partie pour le pathfinding
+    // Part for pathfinding
     private Cell previousCell; //pour reconstituer le chemin
     private int cost; // cost to move from cell to cell
     private int heuristic; // distance between cell and the ending cell

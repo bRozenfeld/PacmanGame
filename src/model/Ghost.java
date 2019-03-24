@@ -64,16 +64,16 @@ public class Ghost extends MovableElement {
      * @param endCell : Cell to go
      * @param graph : ArrayList of Cell containing all the Cell in the game
      */
-    public void setMoves(ArrayList<Cell> graph, Cell endCell) {
-            cellStack = pf.getWay(graph, this.getCell(), endCell);
+    public void setMoves(ArrayList<Cell> graph, Cell endCell, int[][] board) {
+            cellStack = pf.getWay(graph, this.getCell(), endCell, board);
     }
 
     /**
      * Define a way to come back to its initial position
      * @param graph
      */
-    public void setRegeneratingMoves(ArrayList<Cell> graph) {
-        cellStack = pf.getWay(graph, this.getCell(), this.getBeginCell());
+    public void setRegeneratingMoves(ArrayList<Cell> graph, int[][] board) {
+        cellStack = pf.getWay(graph, this.getCell(), this.getBeginCell(), board);
     }
 
     /**

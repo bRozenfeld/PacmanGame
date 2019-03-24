@@ -221,11 +221,14 @@ public class GraphicGame extends JFrame {
                     gc.add(gg);
                 }
                 else if(se instanceof Bonus) {
-                    GraphicBonus gb = new GraphicBonus(game.getBonus());
+                    Bonus b = (Bonus) se;
+                    //GraphicBonus gb = new GraphicBonus(b);
+                    GBonus gb = new GBonus(b);
                     gc.add(gb);
                 }
                 // check the movable elements
                 if(!c.getMovableElementList().isEmpty()) {
+                    gc.removeAll();
                     MovableElement me = c.getMovableElementList().get(0); // just need one to draw
                     if (me instanceof  Pacman) {
                         GraphicPacman gp = new GraphicPacman(game.getPacman());
@@ -287,14 +290,12 @@ public class GraphicGame extends JFrame {
 
     private void updateGame() {
         game.checkGhost();
-        game.setBonusCell();
+        //game.setBonusCell();
 
-            game.getPacman().move();
-            game.checkPacman();
-            updateGhost();
-            game.checkPacman();
-
-
+        game.getPacman().move();
+        game.checkPacman();
+        updateGhost();
+        game.checkPacman();
     }
 
     /************* Loop Game Part **************************/
@@ -302,14 +303,15 @@ public class GraphicGame extends JFrame {
     public void play() {
         int delay = 200;
         game.setGhostsMoves();
-        ActionListener taskePerformer = new ActionListener() {
+
+        ActionListener taskPerformer = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updateGame();
                 render();
             }
         };
-        new Timer(delay, taskePerformer).start();
+        new Timer(delay, taskPerformer).start();
     }
 
     private void doNothing(){}

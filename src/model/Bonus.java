@@ -15,4 +15,8 @@ public class Bonus extends StaticElement {
     public TypeBonus getTypeBonus() {
         return typeBonus;
     }
+
+    public String toString() {
+        return ""+ this.typeBonus;
+    }
 }

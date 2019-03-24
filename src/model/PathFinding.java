@@ -6,7 +6,7 @@ import java.util.Stack;
 
 public class PathFinding {
 
-    public Stack<Cell> getWay(ArrayList<Cell> graph, Cell beginCell, Cell endCell) {
+    public Stack<Cell> getWay(ArrayList<Cell> graph, Cell beginCell, Cell endCell, int[][] board) {
         Stack<Cell> res = new Stack<>(); //stack containing the way
         CellComparator cp = new CellComparator();
 
@@ -24,7 +24,7 @@ public class PathFinding {
             System.out.println("Cell : " + c);
             System.out.println("Voisins: ");
             */
-            for(Cell v : this.getAdjacentCells(graph,c, endCell, closedList)) {
+            for(Cell v : this.getAdjacentCells(graph,c, endCell, closedList, board)) {
 
                 /*
                 System.out.println(v);
@@ -78,12 +78,13 @@ public class PathFinding {
      * @param c
      * @return
      */
-    private ArrayList<Cell> getAdjacentCells(ArrayList<Cell> g, Cell c, Cell endCell, ArrayList<Cell> closedList) {
+    private ArrayList<Cell> getAdjacentCells(ArrayList<Cell> g, Cell c, Cell endCell, ArrayList<Cell> closedList, int[][] board) {
         ArrayList<Cell> listCell = new ArrayList<>();
         for(Cell cell : g) {
-            if(((cell.getY()==c.getY() && (c.getX()==cell.getX()+1 || c.getX()==cell.getX()-1))
-                    || (cell.getX() == c.getX() &&(c.getY()==cell.getY()+1 || c.getY()==cell.getY()-1))
-                    ) && cell.getIsWall()==false) {
+            if(((cell.getY()==c.getY() && (Math.abs(c.getX()-cell.getX())==1
+                    || Math.abs(c.getX()-cell.getX())==board[0].length-1))
+                    || (cell.getX() == c.getX() && Math.abs(c.getY()-cell.getY())==1))
+                     && cell.getIsWall()==false) {
                 if(closedList.contains(cell)) {
                     c.setPreviousCell(cell);
                 }
