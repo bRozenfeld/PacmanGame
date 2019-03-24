@@ -523,7 +523,10 @@ public class Game {
             this.score += 100 * (int)Math.pow(2,this.ghostEaten);
             g.setIsRegenerating(true);
             g.setVulnerabilityTime(0);
-            if (this.ghostEaten==4){this.ghostEaten=0;}
+            if (this.ghostEaten==4) {
+                this.ghostEaten=0;
+            }
+            g.setCellStack(null);
             g.setRegeneratingMoves(cellList, board);
         }
         // pacman is eaten by the ghost

@@ -82,7 +82,7 @@ public class Ghost extends MovableElement {
      * Then switch isregenerating to false
      */
     public void checkIsRegenerating() {
-        if(isRegenerating && this.getCell().equals(getBeginCell()))
+        if(isRegenerating && this.getCell().equals(this.getBeginCell()))
             isRegenerating = false;
     }
 
