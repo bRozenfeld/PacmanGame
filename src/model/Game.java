@@ -217,9 +217,9 @@ public class Game {
      * That means checking their vulnerability or
      * If they are regenerating or not
      */
-    public void checkGhost() {
+    public void checkGhost(int timer) {
         for(Ghost g : ghostList) {
-            if(g.getVulnerabilityTime() > 0) {
+            if(g.getVulnerabilityTime() > 0 && timer % 5 == 0) { //each second -1
                 g.setVulnerabilityTime(g.getVulnerabilityTime()-1);
             }
             g.checkIsRegenerating();
