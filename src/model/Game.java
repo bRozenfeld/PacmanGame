@@ -14,23 +14,25 @@ import java.util.Stack;
  * @inv {@code lives>=0 && lives<=3}
  * @inv {@code score>=0}
  * @inv {@code level>0}
+ * @inv {@code cellList != null}
+ * @inv {@code pacman != null}
+ * @inv {@code bonus != null}
+ * @inv {@code ghostBlueTime >= 0}
+ * @inv {@code flashBeforeBlueTimeEnd >= 0}
+ * @inv {@code gumBeforeFirstBonus > 0}
+ * @inv {@code gumBeforeSecondBonus > 0}
+ * @inv {@code ghostList.size() == 4}
  **/
 public class Game {
 
     /**
-     * 2D array representing the board
-     * 0 : wall
-     * 1 : cell with gomme
-     * 2 : cell with super gomme
-     * 3 : starting cell for pacman
-     * 4 : starting cell for a ghost
-     * 5 : cell where bonus will appear
-     *
-     * P e à supprimer
+     * variable representing an element of the game
+     * in an int 2D array.
+     * Is used to initialize the game
      */
     private static final int WALL = 0;
     private static final int GUM = 1;
-    private static final int SUPER_GOMME = 2;
+    private static final int SUPER_Gum = 2;
     private static final int PACMAN = 3;
     private static final int VOID_CELL = 4;
     private static final int BONUS = 5;
@@ -70,7 +72,7 @@ public class Game {
     private Pacman pacman;
 
     /**
-     * represent the bonus objects that appear twice per level
+     * represent the bonus object that appear twice per level
      */
     private Bonus bonus;
 
@@ -85,14 +87,14 @@ public class Game {
     private ArrayList<Ghost> ghostList;
 
     /**
-     * int representing the gum remaining in the game
+     * int representing the number of gum remaining in the game
      */
-    int numberGommes;
+    private int numberGums;
 
     /**
      * int corresponding of the number of ghost eaten by Pacman
      * when they are vulnerable.
-     * Each time pacman eat a ghost, his score increase by 2^ghostEaten
+     * Each time pacman eat a ghost, his score is increasing by 2^ghostEaten
      */
     private int ghostEaten;
 
@@ -113,25 +115,27 @@ public class Game {
     private int flashBeforeBlueTimeEnd;
 
     /**
-     * int representing how many time a new bonus will appear
-     * in this level
-     * A bonus appear twice per level
+     * int representing the number of gum pacman
+     * has to eat before the first bonus appears
      */
-    private int bonusRemaining;
-
-
     private int gumsBeforeFirstBonus;
-    private int gumsBeforeSecondBonus;
-
-    private boolean isNextLevel;
-
-
 
     /**
-     * 2D array representing the board
+     * int representing the number of gum pacman
+     * has to eat before the second bonus appears
+     */
+    private int gumsBeforeSecondBonus;
+
+    /**
+     * 2D int array representing the board
      */
     private int[][] board;
 
+    /**
+     * Create a new Game
+     * @param board : 2D int array representing the game
+     *              each value correspond to an element of the game
+     */
     public Game(int[][] board) {
 
         this.board = board;
@@ -140,23 +144,17 @@ public class Game {
         this.score = 0;
         this.ghostEaten = 0;
         this.bestScore = this.readBestScore();
-        this.board = board;
         this.isOver = false;
-        this.isNextLevel = false;
-        this.bonusRemaining = 2;
 
         this.initBoard(); // init the board
         this.setGhostTime(); // init the ghost parameters
         this.initBonus(); // init the bonus
 
-        this.gumsBeforeFirstBonus = numberGommes / 3;
-        this.gumsBeforeSecondBonus = numberGommes * 2 / 3;
+        this.gumsBeforeFirstBonus = numberGums / 3; // first bonus after one third gums had been eaten
+        this.gumsBeforeSecondBonus = numberGums * 2 / 3; // second bonus after two third gums had been eaten
 
     }
 
-    public Bonus getBonus() {
-        return bonus;
-    }
 
     public int getBestScore() { return bestScore; }
 
@@ -195,11 +193,18 @@ public class Game {
     /**
      * Check the state of the ghosts in the game
      * That means checking their vulnerability or
-     * If they are regenerating or not
+     * If they are regenerating or not.
+     * @param timer : int representing the number of time this method has been called
+     *
+     * @pre {@code timer >= 0}
+     *
      */
     public void checkGhost(int timer) {
+        //precondition
+        assert timer >= 0 : "Precondition violated : timer < 0";
+
         for(Ghost g : ghostList) {
-            if(g.getVulnerabilityTime() > 0 && timer % 5 == 0) { //each second -1
+            if(g.getVulnerabilityTime() > 0 && timer % 5 == 0) { //each five call, -1
                 g.setVulnerabilityTime(g.getVulnerabilityTime()-1);
             }
             if(g.getVulnerabilityTime() > 0 && g.getVulnerabilityTime() <= flashBeforeBlueTimeEnd) {
@@ -209,6 +214,8 @@ public class Game {
             if(g.getVulnerabilityTime() == 0)
                 g.setIsFlashing(false);
         }
+
+        invariant();
     }
 
     /**
@@ -216,7 +223,9 @@ public class Game {
      * If the cell contain other element then call the methods to handle it
      */
     public void checkPacman() {
-        // Check if there is a static element (ie a gomme or a bonus) in the pacman cell
+        System.out.println(bonusCell);
+
+        // Check if there is a static element (ie a Gum or a bonus) in the pacman cell
         StaticElement se = this.pacman.getCell().getStaticElement();
         if(se != null) {
             this.eatStaticElement(se);
@@ -233,8 +242,9 @@ public class Game {
                 }
             }
         }
-    }
 
+        invariant();
+    }
 
     /**
      * Initialize a list of move for each ghost
@@ -256,14 +266,21 @@ public class Game {
                     break;
             }
         }
+
+        invariant();
     }
 
     /**
      * Define list of movement to pinky
      * He aims for a position in front of pacman mouth
      * @param g : Ghost representing Pinky
+     *
+     * @pre {@code g != null}
      */
     public void setPinkyMoves(Ghost g) {
+        //precondition
+        assert g != null : "Precondition violated : g is null";
+
         Cell c = (Cell) pacman.getCellQueue().peekFirst();
         if(c != null) {
             g.setMoves(cellList, c, board);
@@ -271,6 +288,8 @@ public class Game {
         else {
             g.setMoves(cellList, pacman.getCell(), board);
         }
+
+        invariant();
     }
 
     /**
@@ -279,7 +298,9 @@ public class Game {
      * @param g : Ghost g representing Clyde
      */
     public void setClydeMoves(Ghost g) {
-        PathFinding pf = new PathFinding();
+        //precondition
+        assert g != null : "Precondition violated : g is null";
+
         Random r = new Random();
         boolean find = false;
         while(!find) {
@@ -290,6 +311,8 @@ public class Game {
                 find = true;
             }
         }
+
+        invariant();
     }
 
     /**
@@ -298,6 +321,9 @@ public class Game {
      * @param g : Ghost Inky
      */
     public void setInkyMoves(Ghost g) {
+        //precondition
+        assert g != null : "Precondition violated : g is null";
+
         Random r = new Random();
         int rand = r.nextInt(2); // random int between 0 and 1
         if(rand == 0) { // run toward pacman
@@ -325,6 +351,8 @@ public class Game {
                 }
             }
         }
+
+        invariant();
     }
 
     /**
@@ -332,7 +360,12 @@ public class Game {
      * Blinky is just following pacman all time
      */
     public void setBlinkyMoves(Ghost g) {
+        //precondition
+        assert g != null : "Precondition violated : g is null";
+
         g.setMoves(cellList, pacman.getCell(), board);
+
+        invariant();
     }
 
     /**
@@ -347,8 +380,15 @@ public class Game {
         }
         pacman.setCellQueue(ad);
 
+        invariant();
     }
 
+    /**
+     * Find the cell adjacent of the given cell in the given direction
+     * @param c : cell from which we search
+     * @param dir : direction to search
+     * @return : next cell in the given direction, null if it doesn't exist or is a wall
+     */
     private Cell getNextCell(Cell c, Direction dir) {
         Cell res = null;
         switch (dir) {
@@ -379,13 +419,16 @@ public class Game {
                 }
                 break;
         }
+
+        invariant();
+
         return res;
     }
 
     /**
      * Compare the actual score with the best score when the game is over
      * Then call a method the write the best score in a file
-     * @return int : the maximum between score and bestscore
+     * Set the state of the game at isOver
      */
     public void gameOver(){
         if(this.score > this.bestScore) {
@@ -394,19 +437,23 @@ public class Game {
         this.writeBestScore();
 
         this.isOver = true;
+
+        invariant();
     }
 
     /**
      * Increase the level of a player and
-     * Restore the initiale state of the game
+     * Restore the initial state of the game
      * But adjust the parameters depending of the level
      */
     public void nextLevel() {
         level++;
-
         this.initBoard();
         this.initBonus();
         this.setGhostTime();
+
+        invariant();
+
     }
 
     /**
@@ -429,12 +476,8 @@ public class Game {
         this.pacman.setCell(this.pacman.getBeginCell());
         this.pacman.setCellQueue(new ArrayDeque());
 
+        invariant();
     }
-
-    public Cell getBonusCell() {
-        return bonusCell;
-    }
-
 
     /**
      * Initialise the bonus corresponding to the level of the game
@@ -460,12 +503,10 @@ public class Game {
     }
 
     /**
-     *
-     * @param g
-     * @inv ghostEaten<5
+     * Take care of a meeting between pacman and a ghost
+     * @param g : ghost in the same cell than pacman
      */
     private void pacmanMeetGhost(Ghost g) {
-        System.out.println(g);
         // pacman eat the ghost
         if (g.getVulnerabilityTime() > 0) {
             this.ghostEaten++;
@@ -492,14 +533,14 @@ public class Game {
     /**
      * Increase the actual score when pacman eat a gum by the value of the static element
      * Remove the eaten element from the game
-     * If this is a super gomme, then make ghost vulnerable
+     * If this is a super Gum, then make ghost vulnerable
      * @param se : the element being eaten
      */
     private void eatStaticElement(StaticElement se) {
-        if(se instanceof Gomme) {
-            this.numberGommes--;
+        if(se instanceof Gum) {
+            this.numberGums--;
             this.pacman.getCell().removeStaticElement(se);
-            Gomme g = (Gomme) se;
+            Gum g = (Gum) se;
             if (g.getIsSuper() == true) {
                 for(Ghost ghost : this.ghostList) {
                     ghost.setVulnerabilityTime(ghostBlueTime + flashBeforeBlueTimeEnd);
@@ -513,12 +554,12 @@ public class Game {
         }
         this.score += se.getValue();
 
-        if(this.numberGommes == gumsBeforeFirstBonus || numberGommes == gumsBeforeSecondBonus) {
+        if(this.numberGums == gumsBeforeFirstBonus || numberGums == gumsBeforeSecondBonus) {
             if(bonusCell.getStaticElement() == null)
                 bonusCell.addStaticElement(bonus);
         }
-        // check if there s still gomme left in the game
-        if(this.numberGommes == 0)
+        // check if there s still Gum left in the game
+        if(this.numberGums == 0)
             this.nextLevel();
     }
 
@@ -558,16 +599,16 @@ public class Game {
                     this.cellList.add(c);
                 }
                 else if (board[i][j] == GUM) {
-                    Gomme g = new Gomme(10, false);
-                    Cell c = new Cell(j,i,false,g,g);
+                    Gum g = new Gum(10, false);
+                    Cell c = new Cell(j,i,false,g);
                     this.cellList.add(c);
-                    this.numberGommes++;
+                    this.numberGums++;
                 }
-                else if (board[i][j] == SUPER_GOMME) {
-                    Gomme g = new Gomme(50, true);
-                    Cell c = new Cell(j,i,false,g,g);
+                else if (board[i][j] == SUPER_Gum) {
+                    Gum g = new Gum(50, true);
+                    Cell c = new Cell(j,i,false,g);
                     this.cellList.add(c);
-                    this.numberGommes++;
+                    this.numberGums++;
                 }
                 else if(board[i][j] == PACMAN) {
                     Cell c = new Cell(j,i,false);
@@ -719,6 +760,22 @@ public class Game {
             flashBeforeBlueTimeEnd = 0;
         }
 
+    }
+
+    private void invariant() {
+        assert lives >= 0 : "Invariant violated : lives < 0";
+        assert lives <= 3 : "Invariant violated : lives > 3";
+        assert bestScore >= 0 : "Invariant violated : lives < 0";
+        assert level > 0 : "Invariant violated : level < 0";
+        assert cellList != null : "Invariant violated : cellList is null";
+        assert !cellList.isEmpty() : "Invariant violated : cellList is empty";
+        assert pacman != null : "Invariant violated : pacman is null";
+        assert ghostList.size() == 4 : "Invariant violated : there s not four ghost in the game";
+        assert bonus != null : "Invariant violated : bonus is null";
+        assert ghostBlueTime >= 0 : "Invariant violated : ghostBlueTime < 0";
+        assert flashBeforeBlueTimeEnd >= 0 : "Invariant violated : flashBeforeBlueTimeEnd < 0";
+        assert gumsBeforeFirstBonus > 0 : "Invariant violated : gumsBeforeFirstBonus <= 0";
+        assert gumsBeforeSecondBonus > 0 : "Invariant violated : gumsBeforeSecondBonus <= 0";
     }
 
 

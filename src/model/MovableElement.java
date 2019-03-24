@@ -1,10 +1,7 @@
 package model;
 
-
-import java.util.Stack;
-
 /**
- * Class representing an Element of the game that can move
+ * Abstract class representing an Element of the game that can move
  */
 public abstract class MovableElement {
 
@@ -12,12 +9,17 @@ public abstract class MovableElement {
      * The cell currently containing this element
      */
     private Cell cell;
+
     /**
      * Cell where the element is positioning at the beginning
      */
     private final Cell beginCell;
 
-
+    /**
+     * Initialise a new movable element
+     * @param cell : cell containing this element
+     * @param beginCell : cell containing this element at the beginning
+     */
     public MovableElement(Cell cell, Cell beginCell) {
         this.cell = cell;
         this.beginCell = beginCell;
@@ -31,19 +33,13 @@ public abstract class MovableElement {
         return beginCell;
     }
 
-
     public void setCell(Cell cell) {
         this.cell = cell;
     }
 
-    public void move() {}
-
     /**
-     * Display the position of the element in the terminal
+     * Abstract method move
      */
-    public void displayPosition() {
-        System.out.println("(" + this.cell.getX() + "," + this.cell.getY() + ")");
-    }
-
+    public void move() {}
 
 }

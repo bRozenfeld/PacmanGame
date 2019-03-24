@@ -1,20 +1,20 @@
 package graphics;
 
-import model.Gomme;
+import model.Gum;
 
 import javax.swing.*;
 import java.awt.*;
 
 /**
- * Class representing the graphic part of a gomme
+ * Class representing the graphic part of a gum
  */
-public class GraphicGomme extends JPanel {
+public class GGum extends JPanel {
 
-    private Gomme gomme;
+    private Gum gum;
 
-    public GraphicGomme(Gomme gomme) {
+    public GGum(Gum gum) {
         super();
-        this.gomme = gomme;
+        this.gum = gum;
     }
 
     public void paint(Graphics g){
@@ -24,7 +24,7 @@ public class GraphicGomme extends JPanel {
         int w = getSize().width - 1;
         int h = getSize().width -1;
 
-        if(this.gomme.getIsSuper()==true){
+        if(this.gum.getIsSuper()==true){
             g2d.setColor(Color.PINK);
             g2d.fillOval(w/3,h/4,w*1/2,h*1/2);
         }

@@ -5,22 +5,16 @@ import model.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.File;
 import java.util.ArrayList;
-import java.util.zip.GZIPOutputStream;
+
 
 /**
  * Class representing the main frame of the game
  */
-public class GraphicGame extends JFrame {
+public class GGame extends JFrame {
 
     private Game game;
-    private boolean isRunning;
     private Timer timer;
-
-    private ArrayList<GraphicCell> listCell; // all the graphic cells
-    private ArrayList<GraphicCell> ghostList; // the ghost list
 
     private JPanel pBoard; // panel of the game
     private JPanel pInfo;
@@ -37,24 +31,19 @@ public class GraphicGame extends JFrame {
     private int time;
 
 
-    public GraphicGame(String title, int x, int y, int w, int h, Game game) {
+    public GGame(String title, int x, int y, int w, int h, Game game) {
         super(title);
         this.setBounds(x,y,w,h);
 
         this.time = 0;
-
         this.game = game;
 
         this.initComponents();
-
-
+        
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setVisible(true);
-
-        this.isRunning = true;
-
-
+        
         this.setFocusable(true);
     }
 
@@ -63,33 +52,32 @@ public class GraphicGame extends JFrame {
 
         this.updateBoard();
 
-        pSouth = this.initiPanelSouth(game);
+        pSouth = this.initPanelSouth();
         this.add(pSouth, BorderLayout.SOUTH);
 
-        this.initPanelBestScore(game);
+        this.initPanelBestScore();
         this.add(this.pBestScore, BorderLayout.NORTH);
 
         this.addKeyListener(new BoardListener());
     }
-
-
-    private void initPanelBestScore(Game g) {
+    
+    private void initPanelBestScore() {
         pBestScore=new JPanel(new FlowLayout(FlowLayout.CENTER));
-        lBestScore=new JLabel("Best Score: "+ g.getBestScore());
+        lBestScore=new JLabel("Best Score: "+ game.getBestScore());
         pBestScore.add(lBestScore);
         pBestScore.setBackground(Color.BLACK);
         lBestScore.setForeground(Color.WHITE);
         lBestScore.setFont(new Font("serif", Font.PLAIN,20));
     }
 
-    private void initPanelInfo(Game g) {
+    private void initPanelInfo() {
         this.pInfo=new JPanel();
         this.pInfo.setLayout(new BoxLayout(pInfo,BoxLayout.X_AXIS));
-        this.lLevel=new JLabel("Level: " + g.getLevel());
+        this.lLevel=new JLabel("Level: " + game.getLevel());
         this.pInfo.add(lLevel);
-        this.lLives=new JLabel("Lives: " + g.getLives());
+        this.lLives=new JLabel("Lives: " + game.getLives());
         this.pInfo.add(lLives);
-        this.lScore=new JLabel("Score: " + g.getScore());
+        this.lScore=new JLabel("Score: " + game.getScore());
         this.pInfo.add(lScore);
     }
 
@@ -102,10 +90,10 @@ public class GraphicGame extends JFrame {
         pProducers.add(lProducers);
     }
 
-    private JPanel initiPanelSouth(Game g){
+    private JPanel initPanelSouth(){
         JPanel pSouth=new JPanel();
         pSouth.setLayout(new BoxLayout(pSouth,BoxLayout.Y_AXIS));
-        this.initPanelInfo(g);
+        this.initPanelInfo();
         pSouth.add(this.pInfo);
 
         this.initPanelProducers();
@@ -134,8 +122,7 @@ public class GraphicGame extends JFrame {
         this.add(pBoard);
         pBoard.repaint();
         pBoard.revalidate();
-
-
+        
     }
 
     /************ Update Part *******************************/
@@ -145,21 +132,21 @@ public class GraphicGame extends JFrame {
         pBoard.setBackground(Color.BLACK);
 
         for(Cell c : game.getCellList()) {
-            GraphicCell gc = new GraphicCell(c);
+            GCell gc = new GCell(c);
             if(c.getIsWall() == true) {
                 gc.setBackground(Color.BLUE);
             }
             else { // check first static element in the cell
                 gc.setBackground(Color.BLACK);
                 StaticElement se = c.getStaticElement();
-                if(se instanceof Gomme) {
-                    Gomme gum = (Gomme) se;
-                    GraphicGomme gg = new GraphicGomme(gum);
+                if(se instanceof Gum) {
+                    Gum gum = (Gum) se;
+                    GGum gg = new GGum(gum);
                     gc.add(gg);
                 }
                 else if(se instanceof Bonus) {
                     Bonus b = (Bonus) se;
-                    //GraphicBonus gb = new GraphicBonus(b);
+                    //GBonus gb = new GBonus(b);
                     GBonus gb = new GBonus(b);
                     gc.add(gb);
                 }
@@ -168,11 +155,11 @@ public class GraphicGame extends JFrame {
                     gc.removeAll();
                     MovableElement me = c.getMovableElementList().get(0); // just need one to draw
                     if (me instanceof  Pacman) {
-                        GraphicPacman gp = new GraphicPacman(game.getPacman());
+                        GPacman gp = new GPacman(game.getPacman());
                         gc.add(gp);
                     } else  if(me instanceof Ghost) {
                         Ghost g = (Ghost) me;
-                        GraphicGhost gg = new GraphicGhost(g);
+                        GGhost gg = new GGhost(g);
                         gc.add(gg);
                     }
                 }
@@ -218,24 +205,21 @@ public class GraphicGame extends JFrame {
                 }
             }
         }
-        //this.displayGhostPosition();
     }
 
     private void updateModel(int timer) {
         game.checkGhost(timer);
-
         game.getPacman().move();
-        game.checkPacman();
+        game.checkPacman(); // check pacman after he moves
         updateGhost();
-        game.checkPacman();
-
+        game.checkPacman(); // check pacman after the ghost moves
     }
 
     /************* Loop Game Part **************************/
 
     public void play() {
 
-        int delay = 200;
+        int delay = 170;
         game.setGhostsMoves();
 
         ActionListener taskPerformer = new ActionListener() {
@@ -274,20 +258,20 @@ public class GraphicGame extends JFrame {
             int key = e.getKeyCode();
             switch (key) {
                 case KeyEvent.VK_LEFT:
-                    GraphicGame.this.game.getPacman().setDirection(Direction.Left);
-                    GraphicGame.this.game.setPacmanMoves();
+                    GGame.this.game.getPacman().setDirection(Direction.Left);
+                    GGame.this.game.setPacmanMoves();
                     break;
                 case KeyEvent.VK_RIGHT:
-                    GraphicGame.this.game.getPacman().setDirection(Direction.Right);
-                    GraphicGame.this.game.setPacmanMoves();
+                    GGame.this.game.getPacman().setDirection(Direction.Right);
+                    GGame.this.game.setPacmanMoves();
                     break;
                 case KeyEvent.VK_UP:
-                    GraphicGame.this.game.getPacman().setDirection(Direction.Up);
-                    GraphicGame.this.game.setPacmanMoves();
+                    GGame.this.game.getPacman().setDirection(Direction.Up);
+                    GGame.this.game.setPacmanMoves();
                     break;
                 case KeyEvent.VK_DOWN:
-                    GraphicGame.this.game.getPacman().setDirection(Direction.Down);
-                    GraphicGame.this.game.setPacmanMoves();
+                    GGame.this.game.getPacman().setDirection(Direction.Down);
+                    GGame.this.game.setPacmanMoves();
                     break;
             }
         }

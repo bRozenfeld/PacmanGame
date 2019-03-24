@@ -22,6 +22,7 @@ public class GBonus extends JPanel {
 
         switch (bonus.getTypeBonus()){
             case Cherry:
+                System.out.println("I draw cherry");
                 g2d.setColor(Color.RED);
                 g2d.fillOval(x,150,w/3,h/3);
                 g2d.fillOval(170,y+200,w/3,h/3);

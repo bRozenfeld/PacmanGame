@@ -8,14 +8,14 @@ import java.awt.*;
 /**
  * Class representing the graphic part of a ghost
  */
-public class GraphicGhost extends JPanel {
+public class GGhost extends JPanel {
 
     /**
      * The ghost to draw
      */
     private Ghost ghost;
 
-    public GraphicGhost(Ghost ghost) {
+    public GGhost(Ghost ghost) {
         super();
         this.ghost = ghost;
     }

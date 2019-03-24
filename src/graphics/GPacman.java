@@ -9,11 +9,11 @@ import java.awt.*;
 /**
  * Class representing the graphic part of Pacman
  */
-public class GraphicPacman extends JPanel {
+public class GPacman extends JPanel {
 
     private Pacman pacman;
 
-    public GraphicPacman(Pacman pacman) {
+    public GPacman(Pacman pacman) {
         super();
         this.pacman = pacman;
     }

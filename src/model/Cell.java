@@ -7,19 +7,17 @@ import java.util.Objects;
  * Class representing a cell of the game
  * @inv {@code x>=0}
  * @inv {@code y>=0}
- * @inv
  */
 public class Cell {
     
     private int x;
     private int y;
     private final boolean isWall;
-    private final StaticElement staticElementAtStart;
     private StaticElement staticElement;
     private ArrayList<MovableElement> movableElementList;
 
-    // Part for pathfinding
-    private Cell previousCell; //pour reconstituer le chemin
+    // Part for path finding
+    private Cell previousCell; //to rebuild the way
     private int cost; // cost to move from cell to cell
     private int heuristic; // distance between cell and the ending cell
 
@@ -28,18 +26,16 @@ public class Cell {
         this.x = x;
         this.y = y;
         this.isWall = isWall;
-        this.staticElementAtStart = null;
         this.movableElementList = new ArrayList<>();
         this.staticElement = null;
     }
 
-    public Cell(int x, int y, boolean isWall, StaticElement staticElementAtStart, StaticElement se) {
+    public Cell(int x, int y, boolean isWall, StaticElement se) {
         this.x = x;
         this.y = y;
         this.isWall = isWall;
         this.staticElement = se;
         this.movableElementList = new ArrayList<>();
-        this.staticElementAtStart = staticElementAtStart;
     }
 
     public int getX() {
@@ -52,10 +48,6 @@ public class Cell {
 
     public boolean getIsWall() {
         return isWall;
-    }
-
-    public StaticElement getStaticElementAtStart () {
-        return this.staticElementAtStart;
     }
 
     public StaticElement getStaticElement() {
@@ -115,10 +107,11 @@ public class Cell {
 
     public String toString() {
         String s = new String("(" + this.x + "," + this.y + ")  Wall: " + this.isWall + "\n");
+        s+= this.staticElement;
         return s;
     }
 
-    // Part for the pathfinding
+    // Part for the path finding
 
     public Cell getPreviousCell() {
         return previousCell;
