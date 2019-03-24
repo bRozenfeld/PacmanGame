@@ -10,6 +10,9 @@ import java.awt.*;
  */
 public class GraphicGhost extends JPanel {
 
+    /**
+     * The ghost to draw
+     */
     private Ghost ghost;
 
     public GraphicGhost(Ghost ghost) {
