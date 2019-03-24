@@ -32,11 +32,12 @@ public class Game {
     private static final int GUM = 1;
     private static final int SUPER_GOMME = 2;
     private static final int PACMAN = 3;
-    private static final int BLINKY = 4;
+    private static final int VOID_CELL = 4;
     private static final int BONUS = 5;
     private static final int PINKY = 6;
     private static final int INKY = 7;
     private static final int CLYDE = 8;
+    private static final int BLINKY = 9;
 
     /**
      * int representing the best score
@@ -73,6 +74,8 @@ public class Game {
      */
     private Bonus bonus;
 
+    private Cell bonusCell;
+
     /**
      * list of ghost containing the four ghost in the game
      */
@@ -101,6 +104,14 @@ public class Game {
      */
     private int flashBeforeBlueTimeEnd;
 
+    /**
+     * int representing the number of time a bonus
+     * will appear.
+     * A bonus appear twice per level
+     */
+    private int bonusRemaining;
+
+
 
     /**
      * 2D array representing the board
@@ -118,9 +129,11 @@ public class Game {
     public Game(int[][] board) {
         this.cellList = new ArrayList<>();
         this.ghostList = new ArrayList<>();
+
+
         this.initGame(board);
         this.level = 1;
-        this.lives = 3;
+        this.lives = 200000;
         this.score = 0;
         this.ghostEaten = 0;
         this.bestScore = this.readBestScore();
@@ -128,6 +141,7 @@ public class Game {
         this.isOver = false;
         this.ghostBlueTime = 6;
         this.flashBeforeBlueTimeEnd = 5;
+        this.bonusRemaining = 2;
     }
 
 
@@ -402,6 +416,9 @@ public class Game {
 
         // for each cell, restore its StaticElement at the beginning
         for(Cell c : this.cellList) {
+            if(c.getStaticElementAtStart() instanceof Gomme) {
+                numberGommes++;
+            }
             c.addStaticElement(c.getStaticElementAtStart());
         }
 
@@ -411,6 +428,8 @@ public class Game {
         this.pacman.setCell(this.pacman.getBeginCell());
 
         this.level++;
+
+        this.setGhostTime();
     }
 
     /**
@@ -433,6 +452,9 @@ public class Game {
 
     }
 
+    public Cell getBonusCell() {
+        return bonusCell;
+    }
 
     /**
      * 0 : wall
@@ -478,9 +500,9 @@ public class Game {
                     this.ghostList.add(g);
                 }
                 else if(board[i][j] == BONUS) {
-                    Cell c = new Cell(i,j,false);
-                    Bonus bonus = new Bonus(100, TypeBonus.Cherry, c);
+                    Cell c = new Cell(j,i,false);
                     this.cellList.add(c);
+                    this.bonusCell = c;
                 }
                 else if(board[i][j] == PINKY) {
                     Cell c = new Cell(j,i,false);
@@ -503,35 +525,46 @@ public class Game {
                     this.cellList.add(c);
                     this.ghostList.add(g);
                 }
+                else if(board[i][j] == VOID_CELL) {
+                    Cell c = new Cell(j,i, false);
+                    this.cellList.add(c);
+                }
             }
         }
     }
 
     /**
      * Initialize the bonus for the corresponding level
-     * @param c : Cell where the Bonus should appear
+     * If no bonus is in the bonus cell then
+     * 1 chance on 50 to have the bonus appear
+     * 2 bonus should appear each level
      */
-    private void setBonus(Cell c) {
-        if(this.level == 2) {
-            this.bonus = new Bonus(300, TypeBonus.Strawberry, c);
-        }
-        else if (this.level == 3 || this.level == 4) {
-            this.bonus = new Bonus(500, TypeBonus.Orange, c);
-        }
-        else if (this.level == 5 || this.level == 6) {
-            this.bonus = new Bonus(700, TypeBonus.Orange, c);
-        }
-        else if (this.level == 7 || this.level == 8) {
-            this.bonus = new Bonus(1000, TypeBonus.Melon, c);
-        }
-        else if(this.level == 9 || this.level == 10) {
-            this.bonus = new Bonus(2000, TypeBonus.Galaxian, c);
-        }
-        else if(this.level == 11 || this.level == 12) {
-            this.bonus = new Bonus(3000, TypeBonus.Bell, c);
-        }
-        else if(this.level >= 13) {
-            this.bonus = new Bonus(5000, TypeBonus.Key, c);
+    public void setBonus() {
+        if(bonusCell.getStaticElement() == null) {
+
+            Random r = new Random();
+            int rand = r.nextInt(50);
+            if (rand == 0) {
+                if(this.level == 1) {
+                    this.bonusCell.addStaticElement(new Bonus(100, TypeBonus.Cherry));
+                }
+                else if (this.level == 2) {
+                    this.bonusCell.addStaticElement(new Bonus(300, TypeBonus.Strawberry));
+                } else if (this.level == 3 || this.level == 4) {
+                    this.bonusCell.addStaticElement(new Bonus(500, TypeBonus.Orange));
+                } else if (this.level == 5 || this.level == 6) {
+                    this.bonusCell.addStaticElement(new Bonus(700, TypeBonus.Orange));
+                } else if (this.level == 7 || this.level == 8) {
+                    this.bonusCell.addStaticElement(new Bonus(1000, TypeBonus.Melon));
+                } else if (this.level == 9 || this.level == 10) {
+                    this.bonusCell.addStaticElement(new Bonus(2000, TypeBonus.Galaxian));
+                } else if (this.level == 11 || this.level == 12) {
+                    this.bonusCell.addStaticElement(new Bonus(3000, TypeBonus.Bell));
+                } else if (this.level >= 13) {
+                    this.bonusCell.addStaticElement(new Bonus(5000, TypeBonus.Key));
+                }
+                bonusRemaining--;
+            }
         }
     }
 
@@ -574,7 +607,7 @@ public class Game {
         }
         else if(se instanceof Bonus){
             Bonus b = (Bonus) se;
-            b.getCell().removeStaticElement(se);
+            bonusCell.removeStaticElement(se);
         }
         this.score += se.getValue();
 
@@ -607,6 +640,10 @@ public class Game {
          return res;
      }
 
+     private void initBoard() {
+
+     }
+
     /**
      * Write the attribute best score in a file bestScore.txt in the folder res
      * If the file doesn't exist, create a new file
@@ -628,6 +665,81 @@ public class Game {
          }
      }
 
+    private void setGhostTime() {
+        if(level == 2) {
+            ghostBlueTime = 5;
+            flashBeforeBlueTimeEnd = 5;
+        }
+        else if (level == 3) {
+            ghostBlueTime = 4;
+            flashBeforeBlueTimeEnd = 5;
+        }
+        else if (level == 4) {
+            ghostBlueTime = 3;
+            flashBeforeBlueTimeEnd = 5;
+        }
+        else if (level == 5) {
+            ghostBlueTime = 2;
+            flashBeforeBlueTimeEnd = 5;
+        }
+        else if (level == 6) {
+            ghostBlueTime = 5;
+            flashBeforeBlueTimeEnd = 5;
+        }
+        else if (level == 7) {
+            ghostBlueTime = 5;
+            flashBeforeBlueTimeEnd = 5;
+        }
+        else if (level == 8) {
+            ghostBlueTime = 2;
+            flashBeforeBlueTimeEnd = 5;
+        }
+        else if (level == 9) {
+            ghostBlueTime = 1;
+            flashBeforeBlueTimeEnd = 3;
+        }
+        else if (level == 10) {
+            ghostBlueTime = 5;
+            flashBeforeBlueTimeEnd = 5;
+        }
+        else if (level == 11) {
+            ghostBlueTime = 2;
+            flashBeforeBlueTimeEnd = 5;
+        }
+        else if (level == 12) {
+            ghostBlueTime = 1;
+            flashBeforeBlueTimeEnd = 3;
+        }
+        else if (level == 13) {
+            ghostBlueTime = 1;
+            flashBeforeBlueTimeEnd = 3;
+        }
+        else if (level == 14) {
+            ghostBlueTime = 3;
+            flashBeforeBlueTimeEnd = 5;
+        }
+        else if (level == 15) {
+            ghostBlueTime = 1;
+            flashBeforeBlueTimeEnd = 3;
+        }
+        else if (level == 16) {
+            ghostBlueTime = 1;
+            flashBeforeBlueTimeEnd = 3;
+        }
+        else if (level == 17) {
+            ghostBlueTime = 0;
+            flashBeforeBlueTimeEnd = 0;
+        }
+        else if (level == 18) {
+            ghostBlueTime = 1;
+            flashBeforeBlueTimeEnd = 3;
+        }
+        else if (level >= 19) {
+            ghostBlueTime = 0;
+            flashBeforeBlueTimeEnd = 0;
+        }
+
+    }
 
     /**
      * Display the position of all the Element in the game

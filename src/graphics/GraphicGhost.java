@@ -12,10 +12,6 @@ public class GraphicGhost extends JPanel {
 
     private Ghost ghost;
 
-    public GraphicGhost() {
-
-    }
-
     public GraphicGhost(Ghost ghost) {
         super();
         this.ghost = ghost;
@@ -23,7 +19,7 @@ public class GraphicGhost extends JPanel {
     }
 
     public void paint(Graphics g) {
-        this.setSize(this.getParent().getSize());
+
         Graphics2D g2d = (Graphics2D)g;
         g2d.setBackground(Color.BLACK);
 

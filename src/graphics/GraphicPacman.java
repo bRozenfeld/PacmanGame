@@ -13,29 +13,33 @@ public class GraphicPacman extends JPanel {
 
     private Pacman pacman;
     private boolean mouthOpen;
-    private Direction direction;
-
-    public GraphicPacman() {
-        super();
-        this.mouthOpen = true;
-        this.direction = Direction.Left;
-    }
+    private GraphicCell gCell;
 
     public GraphicPacman(Pacman pacman) {
         super();
         this.pacman = pacman;
         this.mouthOpen = true;
-        this.direction = Direction.Left;
+    }
+
+    public GraphicCell getgCell() {
+        return gCell;
+    }
+
+    public void setgCell(GraphicCell gCell) {
+        this.gCell = gCell;
+    }
+
+    public void changeMouth() {
+        mouthOpen = !mouthOpen;
     }
 
     public void paint(Graphics g) {
-        this.setSize(this.getParent().getSize());
 
         Graphics2D g2d = (Graphics2D)g;
         int x = 0;
         int y = 0;
-        int w = getSize().width -1;
-        int h = getSize().height -1;
+        int w = this.getParent().getSize().width -1;
+        int h = this.getParent().getSize().height -1;
 
         g2d.setBackground(Color.BLACK);
         g2d.setColor(Color.YELLOW);
@@ -44,7 +48,7 @@ public class GraphicPacman extends JPanel {
         if(this.mouthOpen == true) {
             Polygon polygon = new Polygon();
             g2d.setColor(Color.BLACK);
-            switch(this.direction) {
+            switch(pacman.getDirection()) {
                 case Up:
                     polygon.addPoint(0,0);
                     polygon.addPoint(w / 2, h /2);
