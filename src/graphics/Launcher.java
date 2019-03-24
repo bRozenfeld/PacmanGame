@@ -71,14 +71,16 @@ public class Launcher {
 
         GraphicGame gg = new GraphicGame("Pacman", 200, 200, 500, 600, g);
 
+        gg.play();
 
+        /*
         try {
             gg.run();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-
+*/
 
     }
 }

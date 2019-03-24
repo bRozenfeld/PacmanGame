@@ -308,7 +308,6 @@ public class Game {
     public void setInkyMoves(Ghost g) {
         Random r = new Random();
         int rand = r.nextInt(2); // random int between 0 and 1
-        System.out.println(rand);
         if(rand == 0) { // run toward pacman
             g.setMoves(cellList, pacman.getCell());
         }

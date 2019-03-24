@@ -14,11 +14,28 @@ public class GraphicPacman extends JPanel {
     private Pacman pacman;
     private boolean mouthOpen;
     private GraphicCell gCell;
+    private GraphicCell gPreviousCell;
 
     public GraphicPacman(Pacman pacman) {
         super();
         this.pacman = pacman;
         this.mouthOpen = true;
+    }
+
+    public GraphicPacman(Pacman pacman, GraphicCell gc, GraphicCell gpc) {
+        super();
+        this.pacman = pacman;
+        this.mouthOpen = true;
+        this.gCell = gc;
+        this.gPreviousCell = gpc;
+    }
+
+    public GraphicCell getgPreviousCell() {
+        return gPreviousCell;
+    }
+
+    public void setgPreviousCell(GraphicCell gPreviousCell) {
+        this.gPreviousCell = gPreviousCell;
     }
 
     public GraphicCell getgCell() {

@@ -4,13 +4,11 @@ import model.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Class representing the main frame of the game
@@ -80,15 +78,16 @@ public class GraphicGame extends JFrame {
         this.listCell = new ArrayList<>();
         this.pBoard = new JPanel();
         this.pBoard.setLayout(new GridLayout(g.getBoard().length, g.getBoard()[0].length));
-        this.pBoard.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+        //this.pBoard.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
 
         for(Cell c : g.getCellList()) {
             GraphicCell gc = new GraphicCell(c);
-            gc.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+            //gc.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
             if(c.getIsWall() == true) {
                 gc.setBackground(Color.BLUE);
             }
             else {
+                gc.setBackground(Color.BLACK);
                 if (gc.getCell().getStaticElement() instanceof Gomme) {
                     Gomme gum = (Gomme) gc.getCell().getStaticElement();
                     GraphicGomme gg = new GraphicGomme(gum);
@@ -97,7 +96,7 @@ public class GraphicGame extends JFrame {
                 if (!gc.getCell().getMovableElementList().isEmpty()) {
                     MovableElement me = gc.getCell().getMovableElementList().get(0);
                     if (me instanceof Pacman) {
-                        GraphicPacman gp = new GraphicPacman(g.getPacman());
+                        GraphicPacman gp = new GraphicPacman(g.getPacman(), gc, gc);
                         gc.add(gp);
                         pacmanCell = gc;
                         gPacman = gp;
@@ -263,6 +262,8 @@ public class GraphicGame extends JFrame {
     }
 
     /************* Loop Game Part **************************/
+    /*
+
     public void run() throws InterruptedException {
         int i = 0;
         game.setGhostsMoves();
@@ -287,7 +288,21 @@ public class GraphicGame extends JFrame {
 
         }
     }
+*/
 
+    public void play() {
+        int delay = 400;
+        int i = 0;
+        game.setGhostsMoves();
+        ActionListener taskePerformer = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateGame(1);
+                render();
+            }
+        };
+        new Timer(delay, taskePerformer).start();
+    }
 
     private void doNothing(){}
 
@@ -486,60 +501,63 @@ public class GraphicGame extends JFrame {
 
 
     private void updateBoard() {
-        System.out.println("update game");
-        for(GraphicCell gc : listCell) {
-            gc.removeAll();
-            System.out.println("New gc");
-            if(gc.getCell().getIsWall()==true) gc.setBackground(Color.BLUE);
-            else {
-                if (gc.getCell().getStaticElement() == null && gc.getCell().getMovableElementList().isEmpty()) {
-                    gc.setBackground(Color.BLACK);
-                }
-                if(gc.getCell().getStaticElement() != null) {
-                    if (gc.getCell().getStaticElement() instanceof Gomme) {
-                        Gomme gum = (Gomme) gc.getCell().getStaticElement();
-                        GraphicGomme gg = new GraphicGomme(gum);
-                        gc.add(gg);
-                    }
-                    else if(gc.getCell().getStaticElement() instanceof Bonus) {
-                        gc.setBackground(Color.WHITE);
-                    }
-                }
-                System.out.println("Before movablee element");
-                if (!gc.getCell().getMovableElementList().isEmpty()) {
-                    gc.removeAll();
-                    for (MovableElement me : gc.getCell().getMovableElementList()) {
-                        System.out.println(me);
-                        if (me instanceof Pacman) {
-                            GraphicPacman gp = new GraphicPacman(game.getPacman());
-                            gc.add(gp);
-                        } else if (me instanceof Ghost) {
-                            Ghost ghost = (Ghost) me;
-                            if (ghost.getVulnerabilityTime() > 0) {
-                                gc.setBackground(Color.BLUE);
-                            } else if (ghost.getIsRegenerating() == true) {
-                                gc.setBackground(Color.WHITE);
-                            } else {
-                                GraphicGhost gg = new GraphicGhost(ghost);
-                                gc.add(gg);
-                            }
-                        }
-                    }
+        pBoard = new JPanel(new GridLayout(game.getBoard().length, game.getBoard()[0].length));
+        pBoard.setBackground(Color.BLACK);
+        //pBoard.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+
+        for(Cell c : game.getCellList()) {
+            GraphicCell gc = new GraphicCell(c);
+            //gc.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+            if(c.getIsWall() == true) {
+                gc.setBackground(Color.BLUE);
+            }
+            else { // check first static element in the cell
+                gc.setBackground(Color.BLACK);
+                StaticElement se = c.getStaticElement();
+                if(se instanceof Gomme) {
+                    Gomme gum = (Gomme) se;
+                    GraphicGomme gg = new GraphicGomme(gum);
+                    gc.add(gg);
                 }
             }
-            gc.repaint();
-            gc.revalidate();
+            pBoard.add(gc);
         }
-        System.out.println("update game end");
     }
 
 
     private void updateGraphics() {
 
+/*
         for(GraphicCell gc : listCell) {
             gc.redrawCell();
         }
+
+*/
+/*
+        Cell cPacman = game.getPacman().getCell();
+        for(GraphicCell gc : listCell) {
+            if(gc.getCell().equals(cPacman))
+                gc.redrawCell();
+                gPacman.getgPreviousCell().redrawCell();
+                gPacman.setgPreviousCell(gc);
+        }
+*/
+        pBoard.removeAll();
+        //this.initBoard(game);
+        this.updateBoard();
+        this.add(pBoard);
+        pBoard.repaint();
+        pBoard.revalidate();
+       // pacmanCell.redrawCell();
+
+        //gPacman.getgPreviousCell().redrawCell();
+
+
+        /*
         this.repaint();
         this.revalidate();
+        */
     }
+
+
 }
