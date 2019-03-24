@@ -17,6 +17,7 @@ public class GraphicGame extends JFrame {
 
     private Game game;
     private boolean isRunning;
+    private Timer timer;
 
     private ArrayList<GraphicCell> listCell; // all the graphic cells
     private ArrayList<GraphicCell> ghostList; // the ghost list
@@ -25,10 +26,10 @@ public class GraphicGame extends JFrame {
     private JPanel pInfo;
     private JPanel pStartStop;
     private JPanel pBestScore;
-    private JPanel  pProducers;
+    private JPanel pProducers;
     private JPanel pOver; // panel showing when the player lose
 
-    private JButton bSTART;
+    private JButton bStart;
 
     private JLabel lBestScore;
     private JLabel  lLives;
@@ -42,7 +43,7 @@ public class GraphicGame extends JFrame {
 
         this.game = game;
 
-        this.initComponents(game);
+        this.initComponents();
 
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -56,79 +57,38 @@ public class GraphicGame extends JFrame {
     }
 
     /************* Initialisation part *********************/
-    private void initComponents(Game g) {
-        //this.initBoard(g);
-        //this.add(this.pBoard, BorderLayout.CENTER);
+    private void initComponents() {
+
         this.updateBoard();
 
-        JPanel pSouth = this.initiPanelSouth(g);
+        JPanel pSouth = this.initiPanelSouth(game);
         this.add(pSouth, BorderLayout.SOUTH);
 
-        this.initPanelBestScore(g);
+        this.initPanelBestScore(game);
         this.add(this.pBestScore, BorderLayout.NORTH);
 
         this.addKeyListener(new BoardListener());
     }
 
     /**
-     * Initialize the board of the game
-     * @param g
-     */
-    private void initBoard(Game g) {
-        this.ghostList = new ArrayList<>();
-        this.listCell = new ArrayList<>();
-        this.pBoard = new JPanel(new GridLayout(g.getBoard().length, g.getBoard()[0].length));
-
-        for(Cell c : g.getCellList()) {
-            GraphicCell gc = new GraphicCell(c);
-            if(c.getIsWall() == true) {
-                gc.setBackground(Color.BLUE);
-            }
-            else {
-                gc.setBackground(Color.BLACK);
-                if (gc.getCell().getStaticElement() instanceof Gomme) {
-                    Gomme gum = (Gomme) gc.getCell().getStaticElement();
-                    GraphicGomme gg = new GraphicGomme(gum);
-                    gc.add(gg);
-                }
-                if (!gc.getCell().getMovableElementList().isEmpty()) {
-                    MovableElement me = gc.getCell().getMovableElementList().get(0);
-                    if (me instanceof Pacman) {
-                        GraphicPacman gp = new GraphicPacman(g.getPacman());
-                        gc.add(gp);
-                    } else if(me instanceof  Ghost){
-                        Ghost ghost = (Ghost) me;
-                        GraphicGhost gg = new GraphicGhost(ghost);
-                        gc.add(gg);
-                        ghostList.add(gc);
-                    }
-                }
-                gc.setBackground(Color.BLACK);
-            }
-            pBoard.add(gc);
-            this.listCell.add(gc);
-        }
-
-
-    }
-
-    /**
      * Initialise
      */
     private void initPanelStopStart()  {
-        this.pStartStop=new JPanel();
-        this.pStartStop.setLayout(new BoxLayout(pStartStop,BoxLayout.X_AXIS));
+        pStartStop=new JPanel();
+        pStartStop.setLayout(new BoxLayout(pStartStop,BoxLayout.X_AXIS));
 
-        this.bSTART = new JButton("START");
-        this.bSTART.addMouseListener(new RunListener());
-        pStartStop.add(bSTART);
+        bStart = new JButton("START");
+        bStart.addMouseListener(new RunListener());
+        pStartStop.add(bStart);
 }
 
     private void initPanelBestScore(Game g) {
-        this.pBestScore=new JPanel();
-        this.pBestScore.setLayout(new FlowLayout(FlowLayout.CENTER));
-        this.lBestScore=new JLabel("Best Score: "+ g.getBestScore());
-        this.pBestScore.add(lBestScore);
+        pBestScore=new JPanel(new FlowLayout(FlowLayout.CENTER));
+        lBestScore=new JLabel("Best Score: "+ g.getBestScore());
+        pBestScore.add(lBestScore);
+        pBestScore.setBackground(Color.BLACK);
+        lBestScore.setForeground(Color.WHITE);
+        lBestScore.setFont(new Font("serif", Font.PLAIN,20));
     }
 
     private void initPanelInfo(Game g) {
@@ -160,14 +120,21 @@ public class GraphicGame extends JFrame {
         pSouth.add(this.pStartStop);
         this.initPanelProducers();
         pSouth.add(this.pProducers);
+        pSouth.setBackground(Color.BLACK);
         return pSouth;
     }
 
     private void initPanelOver() {
 
+        System.out.println(this.getComponentCount());
+        pBoard.removeAll();
         this.remove(pBoard);
-        this.remove(pInfo);
         this.remove(pStartStop);
+        this.remove(pInfo);
+        this.remove(pBestScore);
+        System.out.println(this.getComponentCount());
+        this.repaint();
+        this.revalidate();
 
         pOver = new JPanel();
         pOver.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -178,23 +145,27 @@ public class GraphicGame extends JFrame {
         JLabel lScore = new JLabel("Score : " + game.getScore());
         pOver.add(lScore);
 
-
-        this.add(pOver);
+        this.add(pOver, BorderLayout.CENTER);
         this.repaint();
         this.revalidate();
+
     }
 
     /************ Update Part *******************************/
     private void updatebStart(){
-        if (this.isRunning==false) {
-            this.bSTART.setText("STOP");
-            this.isRunning=true;
+        if(isRunning) {
+            bStart.setText("Play");
+            isRunning = false;
+            timer.stop();
+        }
+        else {
+            bStart.setText("Stop");
+            isRunning = true;
+            timer.restart();
         }
 
-        else {
-            this.bSTART.setText("START");
-            this.isRunning=false;
-        }
+        System.out.println(this.isFocused());
+
 
     }
 
@@ -238,6 +209,7 @@ public class GraphicGame extends JFrame {
             }
             pBoard.add(gc);
         }
+
         this.add(pBoard);
         pBoard.repaint();
         pBoard.revalidate();
@@ -251,11 +223,8 @@ public class GraphicGame extends JFrame {
     }
 
     private void render() {
-        if(game.isOver()) initPanelOver();
-        else {
-            this.updateBoard();
-            this.updateInfo();
-        }
+        this.updateBoard();
+        this.updateInfo();
     }
 
     private void updateGhost() {
@@ -291,25 +260,38 @@ public class GraphicGame extends JFrame {
         game.checkPacman();
         updateGhost();
         game.checkPacman();
+
     }
 
     /************* Loop Game Part **************************/
 
     public void play() {
+
         int delay = 200;
         game.setGhostsMoves();
 
         ActionListener taskPerformer = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                updateGame();
-                render();
+
+                if(isRunning) {
+                    updateGame();
+                    render();
+                }
+
+                if(game.isOver()) {
+                    initPanelOver();
+                    timer.stop();
+                }
             }
         };
-        new Timer(delay, taskPerformer).start();
+        timer = new Timer(delay, taskPerformer);
+        timer.start();
+
+
     }
 
-    private void doNothing(){}
+
 
     /************ Inner class Part ***************************/
     class RunListener implements MouseListener {
@@ -317,7 +299,6 @@ public class GraphicGame extends JFrame {
         @Override
         public void mouseClicked(MouseEvent e) {
             GraphicGame.this.updatebStart();
-
         }
 
         @Override
@@ -377,6 +358,7 @@ public class GraphicGame extends JFrame {
         }
     }
 
-
-
+    private void initKeyBindings() {
+       // pBoard.getInputMap().put(KeyStroke.getKeyStroke("UP"), );
+    }
 }

@@ -518,7 +518,9 @@ public class Game {
             if(this.lives == 0) {
                 this.gameOver();
             }
-            rebuildLevel();
+            else {
+                rebuildLevel();
+            }
         }
     }
 
