@@ -53,8 +53,8 @@ public class GBonus extends JPanel {
                 break;
             case Galaxian:
                 g2d.setColor(Color.BLUE);
-                int[] xpts = {w/8,w/4,0,w/2,w/8,w/4};
-                int[] ypts = {y,y,h/4,h/4,h/2,h/2};
+                int[] xpts = {x,w/8,w/4,w*3/8,w/4,w/8};
+                int[] ypts = {h/4,y,y,h/4,h/2,h/2};
                 g2d.fillPolygon(xpts,ypts,6);
                 break;
             case Strawberry:

@@ -96,7 +96,7 @@ public class GraphicGame extends JFrame {
     private void initPanelProducers(){
         this.pProducers=new JPanel();
         this.pProducers.setLayout(new BoxLayout(pProducers,BoxLayout.X_AXIS));
-        JLabel lProducers=new JLabel("By @ROZENFELD Benjamin && @SBAITY Haitam");
+        JLabel lProducers=new JLabel("By @ROZENFELD_Benjamin && @SBAITY_Haitam");
         lProducers.setForeground(Color.MAGENTA);
         pProducers.setBackground(Color.GREEN);
         pProducers.add(lProducers);
@@ -124,7 +124,7 @@ public class GraphicGame extends JFrame {
 
         pBoard.add(lBestScore);
 
-        lScore.setText(""+game.getScore());
+        lScore.setText("GAME OVER!!!       your score:"+game.getScore());
         lScore.setForeground(Color.YELLOW);
         lScore.setFont(new Font("serif", Font.PLAIN,30));
         lScore.setHorizontalAlignment(JLabel.CENTER);
