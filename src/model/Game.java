@@ -129,14 +129,6 @@ public class Game {
 
     /**
      * 2D array representing the board
-     * 0 : wall
-     * 1 : cell with gomme
-     * 2 : cell with super gomme
-     * 3 : starting cell for pacman
-     * 4 : starting cell for a ghost
-     * 5 : cell where bonus will appear
-     *
-     * P e à supprimer
      */
     private int[][] board;
 
@@ -184,10 +176,6 @@ public class Game {
         return isOver;
     }
 
-    public void setOver(boolean over) {
-        isOver = over;
-    }
-
     public Pacman getPacman() {
         return this.pacman;
     }
@@ -204,14 +192,6 @@ public class Game {
         return this.board;
     }
 
-    public boolean isNextLevel() {
-        return isNextLevel;
-    }
-
-    public void setNextLevel(boolean nextLevel) {
-        isNextLevel = nextLevel;
-    }
-
     /**
      * Check the state of the ghosts in the game
      * That means checking their vulnerability or
@@ -226,6 +206,8 @@ public class Game {
                 g.setFlashing();
             }
             g.checkIsRegenerating();
+            if(g.getVulnerabilityTime() == 0)
+                g.setIsFlashing(false);
         }
     }
 
@@ -253,27 +235,6 @@ public class Game {
         }
     }
 
-    /**
-     * Move the movableElement into the given cell
-     * @param me : MovableElement to move
-     * @param futurCell : Cell to go
-     */
-    public void moveTo(MovableElement me, Cell futurCell) {
-        Cell actualCell = me.getCell();
-        actualCell.removeMovableElement(me);
-        futurCell.addMovableElement(me);
-        me.setCell(futurCell);
-    }
-
-
-    public void movePacman(Direction dir) {
-        Cell c = getNextCell(pacman.getCell(), dir);
-        if (c.getIsWall()==false) {
-            c.addMovableElement(pacman);
-            pacman.getCell().removeMovableElement(pacman);
-            pacman.setCell(c);
-        }
-    }
 
     /**
      * Initialize a list of move for each ghost
@@ -504,19 +465,20 @@ public class Game {
      * @inv ghostEaten<5
      */
     private void pacmanMeetGhost(Ghost g) {
+        System.out.println(g);
         // pacman eat the ghost
         if (g.getVulnerabilityTime() > 0) {
             this.ghostEaten++;
             this.score += 100 * (int)Math.pow(2,this.ghostEaten);
             g.setIsRegenerating(true);
-            g.setVulnerabilityTime(0);
             if (this.ghostEaten==4) {
                 this.ghostEaten=0;
             }
             g.setRegeneratingMoves(cellList, board);
+            g.setVulnerabilityTime(0);
         }
         // pacman is eaten by the ghost
-        else {
+        else if(g.getVulnerabilityTime() == 0 && g.getIsRegenerating() == false) {
             this.lives--;
             if(this.lives == 0) {
                 this.gameOver();
@@ -542,6 +504,7 @@ public class Game {
                 for(Ghost ghost : this.ghostList) {
                     ghost.setVulnerabilityTime(ghostBlueTime + flashBeforeBlueTimeEnd);
                 }
+                this.ghostEaten = 0;
             }
         }
         else if(se instanceof Bonus){

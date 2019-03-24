@@ -62,6 +62,10 @@ public class Ghost extends MovableElement {
         return isFlashing;
     }
 
+    public void setIsFlashing(boolean isFlashing) {
+        this.isFlashing = isFlashing;
+    }
+
     public void setFlashing() {
         isFlashing = !isFlashing;
     }
@@ -91,8 +95,9 @@ public class Ghost extends MovableElement {
      * Then switch isregenerating to false
      */
     public void checkIsRegenerating() {
-        if(isRegenerating && this.getCell().equals(this.getBeginCell()))
+        if(isRegenerating && this.getCell().equals(this.getBeginCell())) {
             isRegenerating = false;
+        }
     }
 
     public Stack<Cell> getCellStack() {
@@ -129,5 +134,9 @@ public class Ghost extends MovableElement {
     @Override
     public int hashCode() {
         return Objects.hash(pf, isRegenerating, name, vulnerabilityTime, cellStack);
+    }
+
+    public String toString() {
+        return "" + this.vulnerabilityTime;
     }
 }

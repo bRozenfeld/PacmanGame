@@ -247,7 +247,6 @@ public class GraphicGame extends JFrame {
                     updateBoard();
                     updateInfo();
                     time++;
-                    System.out.println(time);
                 }
                 else {
                     timer.stop();
