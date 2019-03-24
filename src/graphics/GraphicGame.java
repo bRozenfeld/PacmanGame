@@ -523,10 +523,14 @@ public class GraphicGame extends JFrame {
                 }
                 // check the movable elements
                 if(!c.getMovableElementList().isEmpty()) {
-                    MovableElement me = c.getMovableElementList().get(0); // just need on the draw
+                    MovableElement me = c.getMovableElementList().get(0); // just need one to draw
                     if (me instanceof  Pacman) {
                         GraphicPacman gp = new GraphicPacman(game.getPacman());
                         gc.add(gp);
+                    } else  if(me instanceof Ghost) {
+                        Ghost g = (Ghost) me;
+                        GraphicGhost gg = new GraphicGhost(g);
+                        gc.add(gg);
                     }
                 }
             }
