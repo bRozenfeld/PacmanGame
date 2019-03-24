@@ -13,7 +13,7 @@ public class Ghost extends MovableElement {
 
     private boolean isRegenerating;
     private final GhostName name;
-
+    private boolean isFlashing;
     private int vulnerabilityTime;
 
     private Stack<Cell> cellStack;
@@ -34,6 +34,7 @@ public class Ghost extends MovableElement {
         this.pf = new PathFinding();
         this.cellStack = new Stack<>();
         this.vulnerabilityTime = 0;
+        this.isFlashing = false;
     }
 
     public int getVulnerabilityTime() {
@@ -55,6 +56,14 @@ public class Ghost extends MovableElement {
 
     public void setIsRegenerating(boolean regenerating) {
         isRegenerating = regenerating;
+    }
+
+    public boolean isFlashing() {
+        return isFlashing;
+    }
+
+    public void setFlashing() {
+        isFlashing = !isFlashing;
     }
 
     /**

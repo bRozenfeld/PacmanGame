@@ -43,18 +43,22 @@ public class GraphicGhost extends JPanel {
                 break;
         }
 
-        if(ghost.getIsRegenerating() == false) {
-            if (ghost.getVulnerabilityTime() > 0)
-                g2d.setColor(Color.BLUE);
 
+        if (ghost.getIsRegenerating() == false) {
+            if (ghost.getVulnerabilityTime() > 0) {
+                if(ghost.isFlashing())
+                    g2d.setColor(Color.WHITE);
+                else
+                    g2d.setColor(Color.BLUE);
+            }
             g2d.fillArc(0, 0, w, h, 360, 180);
             g2d.fillRect(0, h / 2, w, h / 2);
         }
 
         // if regenerating, then only show his eyes
         g2d.setColor(Color.WHITE);
-        g2d.fillOval(w/4,h/6, w/7, w/7);
-        g2d.fillOval(w/2,h/6, w/7, w/7);
+        g2d.fillOval(w / 4, h / 6, w / 7, w / 7);
+        g2d.fillOval(w / 2, h / 6, w / 7, w / 7);
 
 
     }

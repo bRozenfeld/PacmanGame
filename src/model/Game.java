@@ -222,6 +222,9 @@ public class Game {
             if(g.getVulnerabilityTime() > 0 && timer % 5 == 0) { //each second -1
                 g.setVulnerabilityTime(g.getVulnerabilityTime()-1);
             }
+            if(g.getVulnerabilityTime() > 0 && g.getVulnerabilityTime() <= flashBeforeBlueTimeEnd) {
+                g.setFlashing();
+            }
             g.checkIsRegenerating();
         }
     }
