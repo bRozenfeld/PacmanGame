@@ -37,15 +37,9 @@ public class GraphicCell extends JPanel {
 
         }
 */
-        if(this.getComponentCount() != 0) {
-            Component c = this.getComponent(0);
-            this.remove(c);
-        }
-
-        if(cell.getIsWall()==true) {
-            this.setBackground(Color.BLUE);
-        }
-        else if(cell.getIsWall() != false) {
+/*
+        if(cell.getIsWall() == false) {
+            this.removeAll();
             StaticElement se = cell.getStaticElement();
             if (se == null) {
                 this.setBackground(Color.BLACK);
@@ -73,6 +67,7 @@ public class GraphicCell extends JPanel {
         }
         this.repaint();
         this.revalidate();
+        */
     }
 
 }

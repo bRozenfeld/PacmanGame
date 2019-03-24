@@ -4,25 +4,18 @@ import java.util.ArrayDeque;
 
 public class Pacman extends MovableElement{
 
-    private boolean isEaten;
     private Direction direction; //the direction of pacman mouth
+    private boolean mouthOpen;
 
     private ArrayDeque cellQueue;
 
     public Pacman(Cell cell, Cell beginCell) {
         super(cell, beginCell);
-        isEaten = false;
         direction = Direction.Left;
         cellQueue = new ArrayDeque();
+        this.mouthOpen = true;
     }
 
-    public boolean isEaten() {
-        return isEaten;
-    }
-
-    public void setIsEaten(boolean eaten) {
-        isEaten = eaten;
-    }
 
     public Direction getDirection() {
         return direction;
@@ -47,10 +40,12 @@ public class Pacman extends MovableElement{
             futureCell.addMovableElement(this);
             this.setCell(futureCell);
         }
+        mouthOpen = !mouthOpen;
 
     }
 
-    public String toString() {
-        return "isEaten: " + isEaten + " direction: " + direction;
+    public boolean isMouthOpen() {
+        return mouthOpen;
     }
+
 }

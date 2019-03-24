@@ -5,12 +5,14 @@ package model;
  */
 public class Bonus extends StaticElement {
 
-    private TypeBonus typeBonus;
+    private final TypeBonus typeBonus;
 
     public Bonus(int value, TypeBonus typeBonus) {
         super(value);
         this.typeBonus = typeBonus;
     }
 
-
+    public TypeBonus getTypeBonus() {
+        return typeBonus;
+    }
 }

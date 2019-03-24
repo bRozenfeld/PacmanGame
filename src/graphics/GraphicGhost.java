@@ -10,23 +10,23 @@ import java.awt.*;
  */
 public class GraphicGhost extends JPanel {
 
+    /**
+     * The ghost to draw
+     */
     private Ghost ghost;
 
     public GraphicGhost(Ghost ghost) {
         super();
         this.ghost = ghost;
-        this.setBackground(Color.BLACK);
     }
 
     public void paint(Graphics g) {
-
         Graphics2D g2d = (Graphics2D)g;
-        g2d.setBackground(Color.BLACK);
 
         int x = 0;
         int y = 0;
-        int w = this.getParent().getSize().width -1;
-        int h = this.getParent().getSize().height -1;
+        int w = getSize().width -1;
+        int h = getSize().height -1;
 
         switch(this.ghost.getName()) {
             case Inky:
@@ -43,12 +43,19 @@ public class GraphicGhost extends JPanel {
                 break;
         }
 
-        g2d.fillArc(0,0,w, h,360, 180);
-        g2d.fillRect(0,h/2,w,h/2);
+        if(ghost.getIsRegenerating() == false) {
+            if (ghost.getVulnerabilityTime() > 0)
+                g2d.setColor(Color.BLUE);
 
+            g2d.fillArc(0, 0, w, h, 360, 180);
+            g2d.fillRect(0, h / 2, w, h / 2);
+        }
+
+        // if regenerating, then only show his eyes
         g2d.setColor(Color.WHITE);
         g2d.fillOval(w/4,h/6, w/7, w/7);
         g2d.fillOval(w/2,h/6, w/7, w/7);
+
 
     }
 }

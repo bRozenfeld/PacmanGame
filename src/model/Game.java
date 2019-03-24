@@ -70,10 +70,13 @@ public class Game {
     private Pacman pacman;
 
     /**
-     * represent the bonus objects that appear during a game
+     * represent the bonus objects that appear twice per level
      */
     private Bonus bonus;
 
+    /**
+     * Cell where the bonus will appear. It's always in the same cell
+     */
     private Cell bonusCell;
 
     /**
@@ -82,15 +85,20 @@ public class Game {
     private ArrayList<Ghost> ghostList;
 
     /**
-     * int representing the gomme remaining in the game
+     * int representing the gum remaining in the game
      */
     int numberGommes;
 
     /**
-     * int corresponding of the ghost eaten by pacman when they are vulnerable
+     * int corresponding of the number of ghost eaten by Pacman
+     * when they are vulnerable.
+     * Each time pacman eat a ghost, his score increase by 2^ghostEaten
      */
     private int ghostEaten;
 
+    /**
+     * Indicate if the game is over or not
+     */
     private boolean isOver;
 
     /**
@@ -105,11 +113,13 @@ public class Game {
     private int flashBeforeBlueTimeEnd;
 
     /**
-     * int representing the number of time a bonus
-     * will appear.
+     * int representing how many time a new bonus will appear
+     * in this level
      * A bonus appear twice per level
      */
     private int bonusRemaining;
+
+    private boolean isNextLevel;
 
 
 
@@ -127,11 +137,8 @@ public class Game {
     private int[][] board;
 
     public Game(int[][] board) {
-        this.cellList = new ArrayList<>();
-        this.ghostList = new ArrayList<>();
 
-
-        this.initGame(board);
+        this.board = board;
         this.level = 1;
         this.lives = 200000;
         this.score = 0;
@@ -139,12 +146,17 @@ public class Game {
         this.bestScore = this.readBestScore();
         this.board = board;
         this.isOver = false;
-        this.ghostBlueTime = 6;
-        this.flashBeforeBlueTimeEnd = 5;
-        this.bonusRemaining = 2;
+        this.isNextLevel = false;
+
+        this.initBoard(); // init the board
+        this.setGhostTime(); // init the ghost parameters
+        this.initBonus(); // init the bonus
+
     }
 
-
+    public Bonus getBonus() {
+        return bonus;
+    }
 
     public int getBestScore() { return bestScore; }
 
@@ -184,6 +196,13 @@ public class Game {
         return this.board;
     }
 
+    public boolean isNextLevel() {
+        return isNextLevel;
+    }
+
+    public void setNextLevel(boolean nextLevel) {
+        isNextLevel = nextLevel;
+    }
 
     /**
      * Check the state of the ghosts in the game
@@ -270,6 +289,7 @@ public class Game {
     /**
      * Define list of movement to pinky
      * He aims for a position in front of pacman mouth
+     * @param g : Ghost representing Pinky
      */
     public void setPinkyMoves(Ghost g) {
         Cell c = (Cell) pacman.getCellQueue().peekFirst();
@@ -284,7 +304,7 @@ public class Game {
     /**
      * Define stack of cell where the ghost has to go
      * Clyde behavior is totally random on the map
-     * @param g : Ghost g representing clyde
+     * @param g : Ghost g representing Clyde
      */
     public void setClydeMoves(Ghost g) {
         PathFinding pf = new PathFinding();
@@ -308,7 +328,6 @@ public class Game {
     public void setInkyMoves(Ghost g) {
         Random r = new Random();
         int rand = r.nextInt(2); // random int between 0 and 1
-        System.out.println(rand);
         if(rand == 0) { // run toward pacman
             g.setMoves(cellList, pacman.getCell());
         }
@@ -404,31 +423,15 @@ public class Game {
     }
 
     /**
-     * Restore the initiale state of the game when player pass a level
+     * Increase the level of a player and
+     * Restore the initiale state of the game
+     * But adjust the parameters depending of the level
      */
     public void nextLevel() {
-        // send each ghost to its initial position
-        for(Ghost g : this.ghostList) {
-            g.getCell().removeMovableElement(g);
-            g.getBeginCell().addMovableElement(g);
-            g.setCell(g.getBeginCell());
-        }
+        level++;
 
-        // for each cell, restore its StaticElement at the beginning
-        for(Cell c : this.cellList) {
-            if(c.getStaticElementAtStart() instanceof Gomme) {
-                numberGommes++;
-            }
-            c.addStaticElement(c.getStaticElementAtStart());
-        }
-
-        // restore pacman to its initial position
-        this.pacman.getCell().removeMovableElement(this.pacman);
-        this.pacman.getBeginCell().addMovableElement(this.pacman);
-        this.pacman.setCell(this.pacman.getBeginCell());
-
-        this.level++;
-
+        this.initBoard();
+        this.initBonus();
         this.setGhostTime();
     }
 
@@ -450,6 +453,8 @@ public class Game {
         this.pacman.setCell(this.pacman.getBeginCell());
         this.pacman.setCellQueue(new ArrayDeque());
 
+        setGhostsMoves();
+
     }
 
     public Cell getBonusCell() {
@@ -457,17 +462,122 @@ public class Game {
     }
 
     /**
-     * 0 : wall
-     * 1 : gomme
-     * 2 : super gomme
-     * 3 : pacman
-     * 4 : blinky
-     * 5 : bonus
-     * 6 : pinky
-     * 7 : inky
-     * 8 : clyde
+     * Initialize the bonus for the corresponding level
+     * If no bonus is in the bonus cell then
+     * 1 chance on 50 to have the bonus appear
+     * 2 bonus should appear each level
      */
-    private void initGame(int [][] board) {
+    public void setBonusCell() {
+        if(bonusCell.getStaticElement() == null && bonusRemaining > 0) {
+            Random r = new Random();
+            int rand = r.nextInt(50);
+            if (rand == 0) {
+                bonusCell.addStaticElement(bonus);
+                bonusRemaining--;
+            }
+        }
+    }
+
+    /**
+     * Initialise the bonus corresponding to the level of the game
+     */
+    public void initBonus() {
+        if(level == 1) {
+            bonus = new Bonus(100, TypeBonus.Cherry);
+        } else if (level == 2) {
+            bonus = new Bonus(300, TypeBonus.Strawberry);
+        } else if (level == 3 || level == 4) {
+            bonus = new Bonus(500, TypeBonus.Orange);
+        } else if (level == 5 || level == 6) {
+            bonus = new Bonus(700, TypeBonus.Orange);
+        } else if (level == 7 || level == 8) {
+            bonus = new Bonus(1000, TypeBonus.Melon);
+        } else if (level == 9 || level == 10) {
+            bonus = new Bonus(2000, TypeBonus.Galaxian);
+        } else if (level == 11 || level == 12) {
+            bonus = new Bonus(3000, TypeBonus.Bell);
+        } else if (level >= 13) {
+            bonus = new Bonus(5000, TypeBonus.Key);
+        }
+    }
+
+
+    private void pacmanMeetGhost(Ghost g) {
+        // pacman eat the ghost
+        if (g.getVulnerabilityTime() > 0) {
+            this.ghostEaten++;
+            this.score += 100 * (int)Math.pow(2,this.ghostEaten);
+            g.setIsRegenerating(true);
+            g.setVulnerabilityTime(0);
+            g.setRegeneratingMoves(cellList);
+        }
+        // pacman is eaten by the ghost
+        else {
+            this.lives--;
+            if(this.lives == 0) {
+                this.gameOver();
+            }
+            rebuildLevel();
+        }
+    }
+
+    /**
+     * Increase the actual score when pacman eat a gum by the value of the static element
+     * Remove the eaten element from the game
+     * If this is a super gomme, then make ghost vulnerable
+     * @param se : the element being eaten
+     */
+    private void eatStaticElement(StaticElement se) {
+        if(se instanceof Gomme) {
+            this.numberGommes--;
+            this.pacman.getCell().removeStaticElement(se);
+            Gomme g = (Gomme) se;
+            if (g.getIsSuper() == true) {
+                for(Ghost ghost : this.ghostList) {
+                    ghost.setVulnerabilityTime(ghostBlueTime + flashBeforeBlueTimeEnd);
+                }
+            }
+        }
+        else if(se instanceof Bonus){
+            Bonus b = (Bonus) se;
+            bonusCell.removeStaticElement(se);
+        }
+        this.score += se.getValue();
+
+        // check if there s still gomme left in the game
+        if(this.numberGommes == 0)
+            this.nextLevel();
+    }
+
+    /**
+     * Get the best score written in the file bestScore.txt in the res folder
+     * @return int : best score
+     */
+     private int readBestScore() {
+         BufferedReader bIn = null;
+         String s = null;
+         int res = 0;
+         try {
+             File inputFile = new File("res/bestScore.txt");
+             bIn = new BufferedReader((new FileReader(inputFile)));
+             s = bIn.readLine();
+             res = Integer.parseInt(s);
+         } catch(IOException e) { }
+         finally {
+             if (bIn != null) {
+                 try {
+                     bIn.close();
+                 } catch(IOException ec){}
+             }
+         }
+         return res;
+     }
+
+
+    private void initBoard() {
+        this.cellList = new ArrayList<>();
+        this.ghostList = new ArrayList<>();
+
         for(int i = 0; i < board.length; i++) {
             for(int j = 0; j < board[0].length; j++) {
                 if(board[i][j] == WALL) {
@@ -531,117 +641,6 @@ public class Game {
                 }
             }
         }
-    }
-
-    /**
-     * Initialize the bonus for the corresponding level
-     * If no bonus is in the bonus cell then
-     * 1 chance on 50 to have the bonus appear
-     * 2 bonus should appear each level
-     */
-    public void setBonus() {
-        if(bonusCell.getStaticElement() == null) {
-
-            Random r = new Random();
-            int rand = r.nextInt(50);
-            if (rand == 0) {
-                if(this.level == 1) {
-                    this.bonusCell.addStaticElement(new Bonus(100, TypeBonus.Cherry));
-                }
-                else if (this.level == 2) {
-                    this.bonusCell.addStaticElement(new Bonus(300, TypeBonus.Strawberry));
-                } else if (this.level == 3 || this.level == 4) {
-                    this.bonusCell.addStaticElement(new Bonus(500, TypeBonus.Orange));
-                } else if (this.level == 5 || this.level == 6) {
-                    this.bonusCell.addStaticElement(new Bonus(700, TypeBonus.Orange));
-                } else if (this.level == 7 || this.level == 8) {
-                    this.bonusCell.addStaticElement(new Bonus(1000, TypeBonus.Melon));
-                } else if (this.level == 9 || this.level == 10) {
-                    this.bonusCell.addStaticElement(new Bonus(2000, TypeBonus.Galaxian));
-                } else if (this.level == 11 || this.level == 12) {
-                    this.bonusCell.addStaticElement(new Bonus(3000, TypeBonus.Bell));
-                } else if (this.level >= 13) {
-                    this.bonusCell.addStaticElement(new Bonus(5000, TypeBonus.Key));
-                }
-                bonusRemaining--;
-            }
-        }
-    }
-
-    private void pacmanMeetGhost(Ghost g) {
-        // pacman eat the ghost
-        if (g.getVulnerabilityTime() > 0) {
-            this.ghostEaten++;
-            this.score += 100 * (int)Math.pow(2,this.ghostEaten);
-            g.setIsRegenerating(true);
-            g.setVulnerabilityTime(0);
-            g.setRegeneratingMoves(cellList);
-        }
-        // pacman is eaten by the ghost
-        else {
-            this.lives--;
-            pacman.setIsEaten(true);
-            setGhostsMoves();
-            if(this.lives == 0) {
-                this.gameOver();
-            }
-        }
-    }
-
-    /**
-     * Increase the actual score when pacman eat a gum by the value of the static element
-     * Remove the eaten element from the game
-     * If this is a super gomme, then make ghost vulnerable
-     * @param se : the element being eaten
-     */
-    private void eatStaticElement(StaticElement se) {
-        if(se instanceof Gomme) {
-            this.numberGommes--;
-            this.pacman.getCell().removeStaticElement(se);
-            Gomme g = (Gomme) se;
-            if (g.getIsSuper() == true) {
-                for(Ghost ghost : this.ghostList) {
-                    ghost.setVulnerabilityTime(ghostBlueTime + flashBeforeBlueTimeEnd);
-                }
-            }
-        }
-        else if(se instanceof Bonus){
-            Bonus b = (Bonus) se;
-            bonusCell.removeStaticElement(se);
-        }
-        this.score += se.getValue();
-
-        // check if there s still gomme left in the game
-        if(this.numberGommes == 0)
-            this.nextLevel();
-    }
-
-    /**
-     * Get the best score written in the file bestScore.txt in the res folder
-     * @return int : best score
-     */
-     private int readBestScore() {
-         BufferedReader bIn = null;
-         String s = null;
-         int res = 0;
-         try {
-             File inputFile = new File("res/bestScore.txt");
-             bIn = new BufferedReader((new FileReader(inputFile)));
-             s = bIn.readLine();
-             res = Integer.parseInt(s);
-         } catch(IOException e) { }
-         finally {
-             if (bIn != null) {
-                 try {
-                     bIn.close();
-                 } catch(IOException ec){}
-             }
-         }
-         return res;
-     }
-
-     private void initBoard() {
-
      }
 
     /**
@@ -665,8 +664,16 @@ public class Game {
          }
      }
 
+    /**
+     * Set the bluetime for ghost when they are vulnerable
+     * And the time before they will stop being vulnerable
+     */
     private void setGhostTime() {
-        if(level == 2) {
+        if (level == 1) {
+            ghostBlueTime = 6;
+            flashBeforeBlueTimeEnd = 5;
+        }
+        else if(level == 2) {
             ghostBlueTime = 5;
             flashBeforeBlueTimeEnd = 5;
         }
@@ -741,20 +748,5 @@ public class Game {
 
     }
 
-    /**
-     * Display the position of all the Element in the game
-     */
-    public void displayElements() {
-        for(Ghost g : ghostList) {
-            System.out.println("Ghost: " + g.getCell());
-        }
-
-        System.out.println("Pacman: " + pacman.getCell());
-
-        for(Cell c : cellList) {
-            if(c.getStaticElement() != null)
-                System.out.println("Gum : " + c);
-        }
-    }
 
 }
