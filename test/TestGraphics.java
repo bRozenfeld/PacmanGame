@@ -1,7 +1,4 @@
-import graphics.GraphicBonus;
-import graphics.GraphicGhost;
-import graphics.GraphicGomme;
-import graphics.GraphicPacman;
+import graphics.*;
 import model.*;
 
 import javax.swing.*;
@@ -26,19 +23,19 @@ public class TestGraphics {
         GraphicGomme gsgo = new GraphicGomme(supgomme);
 
         JPanel jp1 = new JPanel();
-        jp1.setBackground(Color.RED);
-        //jp1.add(gg);
+        //jp1.setBackground(Color.RED);
+        jp1.add(gg);
         //JPanel jp2 = new JPanel();
         //jp2.add(gp);
 
-        JPanel jp3= new JPanel();
-        jp3.add(ggo);
-        JPanel jp4= new JPanel();
-        jp4.add(gsgo);
+        //JPanel jp3= new JPanel();
+      //  jp3.add(ggo);
+     //  JPanel jp4= new JPanel();
+      //  jp4.add(gsgo);
 
-        JPanel jp5 = new JPanel();
+        //Panel jp5 = new JPanel();
 
-        jp5.setBackground(Color.BLACK);
+        //jp5.setBackground(Color.BLACK);
         //jp1.add(ggo);
         //frame.add(ggo);
         //frame.add(jp1);
@@ -47,7 +44,11 @@ public class TestGraphics {
         //  frame.add(jp3);
         //frame.add(jp4);
 
-        Bonus b = new Bonus(100, TypeBonus.Cherry);
+        Bonus b = new Bonus(100, TypeBonus.Galaxian);
+        GBonus bo = new GBonus(b);
+        //JPanel p6=new JPanel();
+        //p6.add(bo);
+        frame.add(bo);
         //ImageIcon im = new ImageIcon("res/images/chery.jpg");
         //System.out.println(im.getImage());
         //GraphicBonus gb = new GraphicBonus("res/images/cherry.jpg",b);
