@@ -455,6 +455,8 @@ public class Game {
             g.getBeginCell().addMovableElement(g);
             g.setCell(g.getBeginCell());
             g.setCellStack(new Stack<>());
+            g.setIsRegenerating(false);
+            g.setVulnerabilityTime(0);
         }
 
         // restore pacman to its initial position
@@ -463,30 +465,12 @@ public class Game {
         this.pacman.setCell(this.pacman.getBeginCell());
         this.pacman.setCellQueue(new ArrayDeque());
 
-        setGhostsMoves();
-
     }
 
     public Cell getBonusCell() {
         return bonusCell;
     }
 
-    /**
-     * Initialize the bonus for the corresponding level
-     * If no bonus is in the bonus cell then
-     * 1 chance on 50 to have the bonus appear
-     * 2 bonus should appear each level
-     */
-    public void setBonusCell() {
-        if(bonusCell.getStaticElement() == null && bonusRemaining > 0) {
-            Random r = new Random();
-            int rand = r.nextInt(50);
-            if (rand == 0) {
-                bonusCell.addStaticElement(bonus);
-                bonusRemaining--;
-            }
-        }
-    }
 
     /**
      * Initialise the bonus corresponding to the level of the game
@@ -526,7 +510,6 @@ public class Game {
             if (this.ghostEaten==4) {
                 this.ghostEaten=0;
             }
-            g.setCellStack(null);
             g.setRegeneratingMoves(cellList, board);
         }
         // pacman is eaten by the ghost
@@ -562,6 +545,10 @@ public class Game {
         }
         this.score += se.getValue();
 
+        if(this.numberGommes == gumsBeforeFirstBonus || numberGommes == gumsBeforeSecondBonus) {
+            if(bonusCell.getStaticElement() == null)
+                bonusCell.addStaticElement(bonus);
+        }
         // check if there s still gomme left in the game
         if(this.numberGommes == 0)
             this.nextLevel();

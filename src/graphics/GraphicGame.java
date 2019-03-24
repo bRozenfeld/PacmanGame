@@ -20,8 +20,6 @@ public class GraphicGame extends JFrame {
 
     private ArrayList<GraphicCell> listCell; // all the graphic cells
     private ArrayList<GraphicCell> ghostList; // the ghost list
-    private GraphicCell pacmanCell;
-    private GraphicPacman gPacman;
 
     private JPanel pBoard; // panel of the game
     private JPanel pInfo;
@@ -42,22 +40,26 @@ public class GraphicGame extends JFrame {
         super(title);
         this.setBounds(x,y,w,h);
 
+        this.game = game;
+
         this.initComponents(game);
+
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setVisible(true);
 
         this.isRunning = true;
-        this.game = game;
+
 
         this.setFocusable(true);
     }
 
     /************* Initialisation part *********************/
     private void initComponents(Game g) {
-        this.initBoard(g);
-        this.add(this.pBoard, BorderLayout.CENTER);
+        //this.initBoard(g);
+        //this.add(this.pBoard, BorderLayout.CENTER);
+        this.updateBoard();
 
         JPanel pSouth = this.initiPanelSouth(g);
         this.add(pSouth, BorderLayout.SOUTH);
@@ -73,16 +75,12 @@ public class GraphicGame extends JFrame {
      * @param g
      */
     private void initBoard(Game g) {
-        this.pacmanCell = null;
         this.ghostList = new ArrayList<>();
         this.listCell = new ArrayList<>();
-        this.pBoard = new JPanel();
-        this.pBoard.setLayout(new GridLayout(g.getBoard().length, g.getBoard()[0].length));
-        //this.pBoard.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+        this.pBoard = new JPanel(new GridLayout(g.getBoard().length, g.getBoard()[0].length));
 
         for(Cell c : g.getCellList()) {
             GraphicCell gc = new GraphicCell(c);
-            //gc.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
             if(c.getIsWall() == true) {
                 gc.setBackground(Color.BLUE);
             }
@@ -98,8 +96,6 @@ public class GraphicGame extends JFrame {
                     if (me instanceof Pacman) {
                         GraphicPacman gp = new GraphicPacman(g.getPacman());
                         gc.add(gp);
-                        pacmanCell = gc;
-                        gPacman = gp;
                     } else if(me instanceof  Ghost){
                         Ghost ghost = (Ghost) me;
                         GraphicGhost gg = new GraphicGhost(ghost);
@@ -290,7 +286,6 @@ public class GraphicGame extends JFrame {
 
     private void updateGame() {
         game.checkGhost();
-        //game.setBonusCell();
 
         game.getPacman().move();
         game.checkPacman();
