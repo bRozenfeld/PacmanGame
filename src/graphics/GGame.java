@@ -21,10 +21,14 @@ public class GGame extends JFrame {
     private JPanel pBestScore;
     private JPanel pProducers;
     private JPanel pSouth;
+    private JPanel pLives;
+
+    private GPacman lifeOne;
+    private GPacman lifeTwo;
+    private GPacman lifeThree;
 
 
     private JLabel lBestScore;
-    private JLabel lLives;
     private JLabel lScore;
     private JLabel lLevel;
 
@@ -52,6 +56,8 @@ public class GGame extends JFrame {
 
         this.updateBoard();
 
+        initPanelLives();
+
         pSouth = this.initPanelSouth();
         this.add(pSouth, BorderLayout.SOUTH);
 
@@ -64,28 +70,37 @@ public class GGame extends JFrame {
     private void initPanelBestScore() {
         pBestScore=new JPanel(new FlowLayout(FlowLayout.CENTER));
         lBestScore=new JLabel("Best Score: "+ game.getBestScore());
+        lBestScore.setForeground(Color.YELLOW);
         pBestScore.add(lBestScore);
         pBestScore.setBackground(Color.BLACK);
-        lBestScore.setForeground(Color.WHITE);
-        lBestScore.setFont(new Font("serif", Font.PLAIN,20));
+        lBestScore.setFont(new Font("serif", Font.PLAIN,40));
     }
 
     private void initPanelInfo() {
         this.pInfo=new JPanel();
-        this.pInfo.setLayout(new BoxLayout(pInfo,BoxLayout.X_AXIS));
-        this.lLevel=new JLabel("Level: " + game.getLevel());
+        pInfo.setBackground(Color.BLACK);
+        this.pInfo.setLayout(new GridLayout(1,3));
+
+        this.lLevel=new JLabel("" + game.getLevel());
         this.pInfo.add(lLevel);
-        this.lLives=new JLabel("Lives: " + game.getLives());
-        this.pInfo.add(lLives);
+        lLevel.setHorizontalAlignment(JLabel.CENTER);
+        lLevel.setForeground(Color.YELLOW);
+
         this.lScore=new JLabel("Score: " + game.getScore());
+        lScore.setFont(new Font("test",Font.ROMAN_BASELINE, 30));
         this.pInfo.add(lScore);
+        lScore.setHorizontalAlignment(JLabel.CENTER);
+        lScore.setForeground(Color.YELLOW);
+
+        pInfo.add(pLives);
+
     }
 
     private void initPanelProducers(){
         this.pProducers=new JPanel();
         this.pProducers.setLayout(new BoxLayout(pProducers,BoxLayout.X_AXIS));
         JLabel lProducers=new JLabel("By @ROZENFELD_Benjamin && @SBAITY_Haitam");
-        lProducers.setForeground(Color.MAGENTA);
+        lProducers.setForeground(Color.BLUE);
         pProducers.setBackground(Color.GREEN);
         pProducers.add(lProducers);
     }
@@ -102,6 +117,20 @@ public class GGame extends JFrame {
         return pSouth;
     }
 
+    private void initPanelLives() {
+        pLives = new JPanel(new GridLayout(1,3));
+        pLives.setBackground(Color.BLACK);
+
+        lifeOne = new GPacman();
+        pLives.add(lifeOne);
+
+        lifeTwo = new GPacman();
+        pLives.add(lifeTwo);
+
+        lifeThree = new GPacman();
+        pLives.add(lifeThree);
+    }
+
     private void gameOver() {
 
         this.remove(pSouth);
@@ -110,14 +139,26 @@ public class GGame extends JFrame {
         pBoard = new JPanel(new BorderLayout());
         pBoard.setBackground(Color.BLACK);
 
-        pBoard.add(lBestScore);
+        lBestScore.setHorizontalAlignment(JLabel.CENTER);
+        pBoard.add(lBestScore, BorderLayout.NORTH);
 
-        lScore.setText("GAME OVER!!!       your score:"+game.getScore());
+        JPanel pgo = new JPanel(new GridLayout(2,1));
+        pgo.setBackground(Color.BLACK);
+
+        JLabel jlgo = new JLabel("GAME OVER !");
+        jlgo.setFont(new Font("lol", Font.PLAIN, 50));
+        jlgo.setHorizontalAlignment(JLabel.CENTER);
+        jlgo.setForeground(Color.YELLOW);
+
+        pgo.add(jlgo);
+
         lScore.setForeground(Color.YELLOW);
         lScore.setFont(new Font("serif", Font.PLAIN,30));
         lScore.setHorizontalAlignment(JLabel.CENTER);
 
-        pBoard.add(lScore);
+        pgo.add(lScore);
+
+        pBoard.add(pgo, BorderLayout.CENTER);
 
         this.add(pBoard);
         pBoard.repaint();
@@ -174,9 +215,22 @@ public class GGame extends JFrame {
     }
 
     private void updateInfo() {
-        lLevel.setText("Level: " + game.getLevel());
-        lLives.setText("Lives: "+ game.getLives());
-        lScore.setText("Score: " + game.getScore());
+        lLevel.setText("Level " + game.getLevel());
+        lScore.setText("Score " + game.getScore());
+
+        switch(game.getLives()) {
+            case 0:
+                lifeThree.setNothing(true);
+                break;
+            case 1:
+                lifeTwo.setNothing(true);
+                break;
+            case 2:
+                lifeThree.setNothing(true);
+                break;
+        }
+        pLives.repaint();
+        pLives.revalidate();
     }
 
     private void updateGhost() {

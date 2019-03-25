@@ -139,7 +139,7 @@ public class Game {
     public Game(int[][] board) {
 
         this.board = board;
-        this.level = 19;
+        this.level = 9;
         this.lives = 3;
         this.score = 0;
         this.ghostEaten = 0;
@@ -763,8 +763,7 @@ public class Game {
     }
 
     private void invariant() {
-        assert lives >= 0 : "Invariant violated : lives < 0";
-        assert lives <= 3 : "Invariant violated : lives > 3";
+        assert lives >= 0 && lives <= 3: "Invariant violated : lives < 0 et lives > 3";
         assert bestScore >= 0 : "Invariant violated : lives < 0";
         assert level > 0 : "Invariant violated : level < 0";
         assert cellList != null : "Invariant violated : cellList is null";
