@@ -223,7 +223,6 @@ public class Game {
      * If the cell contain other element then call the methods to handle it
      */
     public void checkPacman() {
-        System.out.println(bonusCell);
 
         // Check if there is a static element (ie a Gum or a bonus) in the pacman cell
         StaticElement se = this.pacman.getCell().getStaticElement();
@@ -572,7 +571,7 @@ public class Game {
          String s = null;
          int res = 0;
          try {
-             File inputFile = new File("res/bestScore.txt");
+             File inputFile = new File("src/res/bestScore.txt");
              bIn = new BufferedReader((new FileReader(inputFile)));
              s = bIn.readLine();
              res = Integer.parseInt(s);
@@ -664,7 +663,7 @@ public class Game {
     private void writeBestScore() {
          BufferedWriter bOut = null;
          try {
-             File inputFile = new File("res/bestScore.txt");
+             File inputFile = new File("src/res/bestScore.txt");
              inputFile.createNewFile();
              bOut = new BufferedWriter((new FileWriter(inputFile)));
              bOut.write("" +this.bestScore);

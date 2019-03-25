@@ -82,12 +82,13 @@ public class GGame extends JFrame {
         this.pInfo.setLayout(new GridLayout(1,3));
 
         this.lLevel=new JLabel("" + game.getLevel());
+        lLevel.setFont(new Font("level", Font.BOLD, 20));
         this.pInfo.add(lLevel);
         lLevel.setHorizontalAlignment(JLabel.CENTER);
         lLevel.setForeground(Color.YELLOW);
 
-        this.lScore=new JLabel("Score: " + game.getScore());
-        lScore.setFont(new Font("test",Font.ROMAN_BASELINE, 30));
+        this.lScore=new JLabel("" + game.getScore());
+        lScore.setFont(new Font("test",Font.ROMAN_BASELINE, 25));
         this.pInfo.add(lScore);
         lScore.setHorizontalAlignment(JLabel.CENTER);
         lScore.setForeground(Color.YELLOW);
@@ -216,7 +217,7 @@ public class GGame extends JFrame {
 
     private void updateInfo() {
         lLevel.setText("Level " + game.getLevel());
-        lScore.setText("Score " + game.getScore());
+        lScore.setText("" + game.getScore());
 
         switch(game.getLives()) {
             case 0:
