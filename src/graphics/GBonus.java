@@ -15,21 +15,26 @@ public class GBonus extends JPanel {
 
     public void paint(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        int x = 0;
-        int y = 0;
+        int x = 1;
+        int y = 1;
         int w = getSize().width - 1;
         int h = getSize().width -1;
+
+        System.out.println(w);
+        System.out.println(h);
+        //g2d.setColor(Color.GREEN);
+        //g2d.fillOval(x,y,w,w);
 
         switch (bonus.getTypeBonus()){
             case Cherry:
                 System.out.println("I draw cherry");
                 g2d.setColor(Color.RED);
-                g2d.fillOval(x,150,w/3,h/3);
-                g2d.fillOval(170,y+200,w/3,h/3);
+                g2d.fillOval(x,h/2,w/3,h/3);
+                g2d.fillOval(h/2,h/3,w/3,h/3);
                 g2d.setColor(Color.GREEN);
-                g2d.setStroke(new BasicStroke(10));
-                g2d.drawLine(50,152,300,10);
-                g2d.drawLine(230,200,300,10);
+                g2d.setStroke(new BasicStroke(1));
+                g2d.drawLine(w/4,h/2,w*3/4,y);
+                g2d.drawLine(w/2,h/2,w*3/4,y);
                 break;
             case Orange:
                 g2d.setColor(Color.orange);
