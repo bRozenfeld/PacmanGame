@@ -12,7 +12,7 @@ public class TestGraphics {
         Frame frame = new Frame("test");
 
 
-        Bonus b = new Bonus(100, TypeBonus.Cherry);
+        Bonus b = new Bonus(100, TypeBonus.Strawberry);
         GBonus bo = new GBonus(b);
 
         frame.add(bo);

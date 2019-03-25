@@ -30,11 +30,11 @@ public class GBonus extends JPanel {
                 System.out.println("I draw cherry");
                 g2d.setColor(Color.RED);
                 g2d.fillOval(x,h/2,w/3,h/3);
-                g2d.fillOval(h/2,h/3,w/3,h/3);
+                g2d.fillOval(w/3,h*2/3,w/3,h/3);
                 g2d.setColor(Color.GREEN);
                 g2d.setStroke(new BasicStroke(1));
                 g2d.drawLine(w/4,h/2,w*3/4,y);
-                g2d.drawLine(w/2,h/2,w*3/4,y);
+                g2d.drawLine(w/2,h*2/3,w*3/4,y);
                 break;
             case Orange:
                 g2d.setColor(Color.orange);
@@ -43,15 +43,15 @@ public class GBonus extends JPanel {
             case Key:
                 g2d.setColor(Color.yellow);
                 g2d.fillArc(x,y,w/4,h/4,360,360);
-                g2d.setStroke(new BasicStroke(15));
+                g2d.setStroke(new BasicStroke(1));
                 g2d.drawLine(w/4,w/8,w*3/4,w/8);
                 g2d.drawLine(w/2,w/8,w/2,w/5);
                 g2d.drawLine(w*3/4,w/8,w*3/4,w/4);
                 break;
             case Bell:
                 g2d.setColor(Color.yellow);
-                g2d.fillArc(0, 0, w*3/4, h, 360, 180);
-                g2d.fillRect(0, h* 1/2, w*3/4, h* 1/3);
+                g2d.fillArc(x, x, w*3/4, h, 360, 180);
+                g2d.fillRect(x, h* 1/2, w*3/4, h* 1/3);
                 break;
             case Melon:
                 g2d.setColor(Color.GREEN);
@@ -65,10 +65,15 @@ public class GBonus extends JPanel {
                 break;
             case Strawberry:
                 g2d.setColor(Color.RED);
-                g2d.fillArc(x,y,w*1/2,h*3/4,360,180);
-                int[] xpt = {w*1/4,0,(w*1/2)};
-                int[] ypt = {250,h-242,h-242};
-                g2d.fillPolygon(xpt,ypt,3);
+                g2d.fillOval(x,h/6,w/3,h/2);
+                g2d.setColor(Color.GREEN);
+               // g2d.fillOval(x,y,w/2,h/8);
+                g2d.setStroke(new BasicStroke(1));
+                g2d.drawLine(w/6,h/6,x,y);
+                g2d.drawLine(w/6,h/6,w/3,y);
+                g2d.drawLine(w/6,h/6,w/6,y);
+                g2d.drawLine(w/6,h/6,w/3,h/8);
+                g2d.drawLine(w/6,h/6,x,h/8);
                 break;
             case Apple:
                 g2d.setColor(Color.RED);

@@ -139,7 +139,7 @@ public class Game {
     public Game(int[][] board) {
 
         this.board = board;
-        this.level = 1;
+        this.level = 19;
         this.lives = 3;
         this.score = 0;
         this.ghostEaten = 0;
